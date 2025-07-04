@@ -14,3 +14,104 @@ resource "azurerm_resource_group" "rg" {
 output "resource_group" {
   value = azurerm_resource_group.rg
 }
+
+resource "azurerm_storage_account" "this" {
+  name                              = var.name
+  resource_group_name               = var.storage_account_resource_group_name
+  location                          = var.location
+  account_tier                      = var.account_tier
+  account_replication_type          = var.account_replication_type
+  account_kind                      = var.account_kind
+  access_tier                       = var.access_tier
+  allow_nested_items_to_be_public   = var.allow_nested_items_to_be_public
+  allowed_copy_scope                = var.allowed_copy_scope
+  cross_tenant_replication_enabled  = var.cross_tenant_replication_enabled
+  default_to_oauth_authentication   = var.default_to_oauth_authentication
+  dns_endpoint_type                 = var.dns_endpoint_type
+  edge_zone                         = var.edge_zone
+  https_traffic_only_enabled        = var.https_traffic_only_enabled
+  infrastructure_encryption_enabled = var.infrastructure_encryption_enabled
+  is_hns_enabled                    = var.is_hns_enabled
+  large_file_share_enabled          = var.large_file_share_enabled
+  local_user_enabled                = var.local_user_enabled
+  min_tls_version                   = var.min_tls_version
+  nfsv3_enabled                     = var.nfsv3_enabled
+  primary_access_key                = var.primary_access_key
+  primary_blob_connection_string    = var.primary_blob_connection_string
+  primary_connection_string         = var.primary_connection_string
+  public_network_access_enabled     = var.public_network_access_enabled
+  queue_encryption_key_type         = var.queue_encryption_key_type
+  secondary_access_key              = var.secondary_access_key
+  secondary_blob_connection_string  = var.secondary_blob_connection_string
+  secondary_connection_string       = var.secondary_connection_string
+  sftp_enabled                      = var.sftp_enabled
+  shared_access_key_enabled         = var.shared_access_key_enabled
+  table_encryption_key_type         = var.table_encryption_key_type
+  tags                              = var.tags
+
+  blob_properties {
+    change_feed_enabled           = var.blob_properties.change_feed_enabled
+    change_feed_retention_in_days = var.blob_properties.change_feed_retention_in_days
+    default_service_version       = var.blob_properties.default_service_version
+    last_access_time_enabled      = var.blob_properties.last_access_time_enabled
+    versioning_enabled            = var.blob_properties.versioning_enabled
+
+    container_delete_retention_policy {
+      days = var.blob_properties.container_delete_retention_policy.days
+    }
+
+    delete_retention_policy {
+      days                     = var.blob_properties.delete_retention_policy.days
+      permanent_delete_enabled = var.blob_properties.delete_retention_policy.permanent_delete_enabled
+    }
+  }
+
+  network_rules {
+    bypass                     = var.network_rules.bypass
+    default_action             = var.network_rules.default_action
+    ip_rules                   = var.network_rules.ip_rules
+    virtual_network_subnet_ids = var.network_rules.virtual_network_subnet_ids
+  }
+
+  routing {
+    choice                      = var.routing.choice
+    publish_internet_endpoints  = var.routing.publish_internet_endpoints
+    publish_microsoft_endpoints = var.routing.publish_microsoft_endpoints
+  }
+
+  share_properties {
+    retention_policy {
+      days = var.share_properties.retention_policy.days
+    }
+  }
+}
+
+resource "azurerm_storage_queue" "this" {
+  count                = length(var.queue_names)
+  name                 = var.queue_names[count.index].name
+  storage_account_name = azurerm_storage_account.this.name
+
+  metadata = try(var.queue_names[count.index].metadata, null)
+}
+
+resource "azurerm_storage_table" "this" {
+  count                = length(var.tables)
+  name                 = var.tables[count.index].name
+  storage_account_name = azurerm_storage_account.this.name
+
+  dynamic "acl" {
+    for_each = try(var.tables[count.index].acl, [])
+    content {
+      id = acl.value.id
+
+      dynamic "access_policy" {
+        for_each = acl.value.access_policy != null ? [acl.value.access_policy] : []
+        content {
+          expiry      = access_policy.value.expiry
+          permissions = access_policy.value.permissions
+          start       = access_policy.value.start
+        }
+      }
+    }
+  }
+}

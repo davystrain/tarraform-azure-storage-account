@@ -1,11 +1,11 @@
-resource "azurerm_resource_group" "rg" {
-  name     = var.name
-  location = var.location
-}
+# resource "azurerm_resource_group" "rg" {
+#   name     = var.name
+#   location = var.location
+# }
 
-output "resource_group" {
-  value = azurerm_resource_group.rg
-}
+# output "resource_group" {
+#   value = azurerm_resource_group.rg
+# }
 
 resource "azurerm_storage_account" "this" {
   name                              = var.name

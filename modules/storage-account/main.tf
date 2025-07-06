@@ -22,7 +22,7 @@ resource "azurerm_storage_account" "this" {
   account_tier                      = var.account_tier
   account_replication_type          = var.account_replication_type
   # account_kind                      = var.account_kind
-  # access_tier                       = var.access_tier
+  access_tier                       = var.access_tier
   # allow_nested_items_to_be_public   = var.allow_nested_items_to_be_public
   # allowed_copy_scope                = var.allowed_copy_scope
   # cross_tenant_replication_enabled  = var.cross_tenant_replication_enabled
@@ -49,41 +49,41 @@ resource "azurerm_storage_account" "this" {
   # table_encryption_key_type         = var.table_encryption_key_type
   # tags                              = var.tags
 
-  # blob_properties {
-  #   change_feed_enabled           = var.blob_properties.change_feed_enabled
-  #   change_feed_retention_in_days = var.blob_properties.change_feed_retention_in_days
-  #   default_service_version       = var.blob_properties.default_service_version
-  #   last_access_time_enabled      = var.blob_properties.last_access_time_enabled
-  #   versioning_enabled            = var.blob_properties.versioning_enabled
+  blob_properties {
+    change_feed_enabled           = var.blob_properties.change_feed_enabled
+    change_feed_retention_in_days = var.blob_properties.change_feed_retention_in_days
+    default_service_version       = var.blob_properties.default_service_version
+    last_access_time_enabled      = var.blob_properties.last_access_time_enabled
+    versioning_enabled            = var.blob_properties.versioning_enabled
 
-  #   container_delete_retention_policy {
-  #     days = var.blob_properties.container_delete_retention_policy.days
-  #   }
+    container_delete_retention_policy {
+      days = var.blob_properties.container_delete_retention_policy.days
+    }
 
-  #   delete_retention_policy {
-  #     days                     = var.blob_properties.delete_retention_policy.days
-  #     permanent_delete_enabled = var.blob_properties.delete_retention_policy.permanent_delete_enabled
-  #   }
-  # }
+    delete_retention_policy {
+      days                     = var.blob_properties.delete_retention_policy.days
+      permanent_delete_enabled = var.blob_properties.delete_retention_policy.permanent_delete_enabled
+    }
+  }
 
-  # network_rules {
-  #   bypass                     = var.network_rules.bypass
-  #   default_action             = var.network_rules.default_action
-  #   ip_rules                   = var.network_rules.ip_rules
-  #   virtual_network_subnet_ids = var.network_rules.virtual_network_subnet_ids
-  # }
+  network_rules {
+    bypass                     = var.network_rules.bypass
+    default_action             = var.network_rules.default_action
+    ip_rules                   = var.network_rules.ip_rules
+    virtual_network_subnet_ids = var.network_rules.virtual_network_subnet_ids
+  }
 
-  # routing {
-  #   choice                      = var.routing.choice
-  #   publish_internet_endpoints  = var.routing.publish_internet_endpoints
-  #   publish_microsoft_endpoints = var.routing.publish_microsoft_endpoints
-  # }
+  routing {
+    choice                      = var.routing.choice
+    publish_internet_endpoints  = var.routing.publish_internet_endpoints
+    publish_microsoft_endpoints = var.routing.publish_microsoft_endpoints
+  }
 
-  # share_properties {
-  #   retention_policy {
-  #     days = var.share_properties.retention_policy.days
-  #   }
-  # }
+  share_properties {
+    retention_policy {
+      days = var.share_properties.retention_policy.days
+    }
+  }
 }
 
 # resource "azurerm_storage_queue" "this" {

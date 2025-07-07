@@ -197,46 +197,6 @@ variable "table_encryption_key_type" {
   default     = "Service"
 }
 
-variable "blob_properties" {
-  description = "Blob properties block."
-  type = object({
-    change_feed_enabled           = bool
-    change_feed_retention_in_days = number
-    default_service_version       = string
-    last_access_time_enabled      = bool
-    versioning_enabled            = bool
-    container_delete_retention_policy = object({
-      days = number
-    })
-    delete_retention_policy = object({
-      days                     = number
-      permanent_delete_enabled = bool
-    })
-    cors_rule = optional(list(object({
-      allowed_headers    = list(string)
-      allowed_methods    = list(string)
-      allowed_origins    = list(string)
-      exposed_headers    = list(string)
-      max_age_in_seconds = number
-    })))
-  })
-}
-
-variable "queue_properties" {
-  description = "Queue properties block."
-  type = object({
-    cors_rule = list(object({
-      allowed_headers    = list(string)
-      allowed_methods    = list(string)
-      allowed_origins    = list(string)
-      exposed_headers    = list(string)
-      max_age_in_seconds = number
-    }))
-    # Add other queue_properties fields here as needed
-  })
-  default = null
-}
-
 variable "network_rules" {
   description = "Network rules block."
   type = object({

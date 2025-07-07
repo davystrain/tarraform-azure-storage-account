@@ -65,17 +65,6 @@ resource "azurerm_storage_account" "reusable_module" {
       days                     = var.blob_properties.delete_retention_policy.days
       permanent_delete_enabled = var.blob_properties.delete_retention_policy.permanent_delete_enabled
     }
-
-    dynamic "cors_rule" {
-      for_each = try(var.blob_properties.cors_rule, [])
-      content {
-        allowed_headers    = cors_rule.value.allowed_headers
-        allowed_methods    = cors_rule.value.allowed_methods
-        allowed_origins    = cors_rule.value.allowed_origins
-        exposed_headers    = cors_rule.value.exposed_headers
-        max_age_in_seconds = cors_rule.value.max_age_in_seconds
-      }
-    }
   }
   network_rules {
     bypass                     = var.network_rules.bypass
@@ -90,22 +79,6 @@ resource "azurerm_storage_account" "reusable_module" {
     publish_microsoft_endpoints = var.routing.publish_microsoft_endpoints
   }
 
-  dynamic "queue_properties" {
-    for_each = var.queue_properties == null ? [] : [var.queue_properties]
-    content {
-      dynamic "cors_rule" {
-        for_each = try(queue_properties.value.cors_rule, [])
-        content {
-          allowed_headers    = cors_rule.value.allowed_headers
-          allowed_methods    = cors_rule.value.allowed_methods
-          allowed_origins    = cors_rule.value.allowed_origins
-          exposed_headers    = cors_rule.value.exposed_headers
-          max_age_in_seconds = cors_rule.value.max_age_in_seconds
-        }
-      }
-      # Add other queue_properties fields here as needed
-    }
-  }
 }
 
 resource "azurerm_storage_container" "reusable_module" {

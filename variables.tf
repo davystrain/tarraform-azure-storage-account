@@ -256,15 +256,6 @@ variable "routing" {
   })
 }
 
-variable "share_properties" {
-  description = "Share properties block."
-  type = object({
-    retention_policy = object({
-      days = number
-    })
-  })
-}
-
 variable "containers" {
   description = "List of storage containers with optional access types and metadata."
   type = list(object({

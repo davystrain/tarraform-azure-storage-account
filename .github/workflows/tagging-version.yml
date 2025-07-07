@@ -1,0 +1,65 @@
+name: Manual Version Tagging
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type (major, minor, patch)'
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Fetch all tags
+        run: git fetch --tags
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "Latest tag is: $latest_tag"
+          echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
+
+      - name: Calculate next version
+        id: bump_tag
+        run: |
+          latest="${{ steps.get_tag.outputs.latest_tag }}"
+          IFS='.' read -r major minor patch <<<"${latest#v}"
+
+          case "${{ github.event.inputs.bump }}" in
+            major)
+              new_tag="v$((major + 1)).0.0"
+              ;;
+            minor)
+              new_tag="v$major.$((minor + 1)).0"
+              ;;
+            patch)
+              new_tag="v$major.$minor.$((patch + 1))"
+              ;;
+            *)
+              echo "Invalid bump type"; exit 1
+              ;;
+          esac
+
+          echo "New tag will be: $new_tag"
+          echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
+
+      - name: Tag and push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag ${{ steps.bump_tag.outputs.new_tag }}
+          git push origin ${{ steps.bump_tag.outputs.new_tag }}

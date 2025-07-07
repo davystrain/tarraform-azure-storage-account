@@ -19,7 +19,7 @@ locals {
 
 module "storage" {
   for_each = local.storage_vars.storage_accounts
-  source   = "git::https://github.com/davystrain/module-resource-group.git//modules//storage-account?ref=main"
+  source   = "git::https://github.com/racwa/terraform-azure-storage-account?ref=[git-tag]"
 
 ## Required fields
   name                     = each.key
@@ -32,8 +32,9 @@ module "storage" {
 ## Optional fields
   account_kind             = try(each.value["account_kind"], null)
 
+}
 
-
+```
 ## Input Arguments
 
 | Name                                | Optional/Required | Type           | Default Setting | Short Description                                                                                   |
@@ -81,27 +82,5 @@ module "storage" {
 
 > **Note:** Some complex arguments (like `blob_properties`, `network_rules`, etc.) have their own nested required/optional fields. See the [Terraform documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account)
 
-
-
-locals {
-  storage_vars = yamldecode(file("${path.module}/data/storage_vars.yaml"))
-}
-
-module "storage" {
-  for_each = local.storage_vars.storage_accounts
-  source   = "git::https://github.com/davystrain/module-resource-group.git//modules//storage-account?ref=main"
-
-  name                = each.key
-  resource_group_name = try(each.value["resource_group_name"], null)
-  location            = try(each.value["location"], null)
-  access_tier         = try(each.value["access_tier"], null)
-  # account_kind                      = try(each.value["account_kind"], null)
-  account_replication_type = try(each.value["account_replication_type"], null)
-  account_tier             = try(each.value["account_tier"], null)
-  # allow_nested_items_to_be_public   = try(each.value["allow_nested_items_to_be_public"], null)
-  # allowed_copy_scope                = try(each.value["allowed_copy_scope"], null)
-  # cross_tenant_replication_enabled  = try(each.value["cross_tenant_replication_enabled"], null)
-  # default_to_oauth_authentication   = try(each.value["default_to_oauth_authentication"], null)
-  # dns_endpoint_type                 = try(each.value["dns_endpoint_type"], null)
-
+```yaml
 

@@ -2,6 +2,38 @@
 
 This repository contains a reusable Terraform module for deploying and managing Azure Storage Accounts. The module supports the creation of storage queues and tables, and exposes a wide range of configuration arguments to enable flexible and secure storage deployments in Azure.
 
+## Resources
+
+- [azurerm_storage_account](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account)  
+- [azurerm_storage_blob](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_blob)  
+- [azurerm_storage_queue](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_queue)  
+- [azurerm_storage_table](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_table)
+
+## Example: Calling the module
+
+This module is data driven using a yaml data file
+
+locals {
+  storage_vars = yamldecode(file("${path.module}/data/storage_vars.yaml"))
+}
+
+module "storage" {
+  for_each = local.storage_vars.storage_accounts
+  source   = "git::https://github.com/davystrain/module-resource-group.git//modules//storage-account?ref=main"
+
+## Required fields
+  name                     = each.key
+  resource_group_name      = each.value.resource_group_name
+  location                 = each.value.location
+  access_tier              = each.value.access_tier
+  account_replication_type = each.value.account_replication_type
+  account_tier             = each.value.account_tier
+
+## Optional fields
+  account_kind             = try(each.value["account_kind"], null)
+
+
+
 ## Input Arguments
 
 | Name                                | Optional/Required | Type           | Default Setting | Short Description                                                                                   |
@@ -48,3 +80,28 @@ This repository contains a reusable Terraform module for deploying and managing 
 | tables                              | Optional          | list(object)   | []               | List of storage table objects to create (e.g., [{ name = "table1" }]).                              |
 
 > **Note:** Some complex arguments (like `blob_properties`, `network_rules`, etc.) have their own nested required/optional fields. See the [Terraform documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account)
+
+
+
+locals {
+  storage_vars = yamldecode(file("${path.module}/data/storage_vars.yaml"))
+}
+
+module "storage" {
+  for_each = local.storage_vars.storage_accounts
+  source   = "git::https://github.com/davystrain/module-resource-group.git//modules//storage-account?ref=main"
+
+  name                = each.key
+  resource_group_name = try(each.value["resource_group_name"], null)
+  location            = try(each.value["location"], null)
+  access_tier         = try(each.value["access_tier"], null)
+  # account_kind                      = try(each.value["account_kind"], null)
+  account_replication_type = try(each.value["account_replication_type"], null)
+  account_tier             = try(each.value["account_tier"], null)
+  # allow_nested_items_to_be_public   = try(each.value["allow_nested_items_to_be_public"], null)
+  # allowed_copy_scope                = try(each.value["allowed_copy_scope"], null)
+  # cross_tenant_replication_enabled  = try(each.value["cross_tenant_replication_enabled"], null)
+  # default_to_oauth_authentication   = try(each.value["default_to_oauth_authentication"], null)
+  # dns_endpoint_type                 = try(each.value["dns_endpoint_type"], null)
+
+

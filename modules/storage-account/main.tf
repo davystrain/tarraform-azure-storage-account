@@ -120,7 +120,7 @@ resource "azurerm_storage_blob" "reusable_module" {
   count                  = length(var.blobs)
   name                   = var.blobs[count.index].name
   storage_account_name   = azurerm_storage_account.reusable_module.name
-  storage_container_name = var.blobs[count.index].container_name
+  storage_container_name = var.blobs[count.index].storage_container_name
   type                   = var.blobs[count.index].type
   source                 = try(var.blobs[count.index].source, null)
   source_content         = try(var.blobs[count.index].source_content, null)

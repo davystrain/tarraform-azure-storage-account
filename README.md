@@ -40,12 +40,12 @@ module "storage" {
 
 | Name                                | Optional/Required | Type           | Default Setting | Short Description                                                                                   |
 |-------------------------------------|-------------------|----------------|------------------|-----------------------------------------------------------------------------------------------------|
-| name                                | Required          | string         | n/a              | Specifies the name of the storage account. Must be unique and lowercase alphanumeric.               |
-| storage_account_resource_group_name | Required          | string         | n/a              | The name of the resource group in which to create the storage account.                              |
-| location                            | Required          | string         | n/a              | Azure region where the resource exists.                                                             |
-| account_kind                        | Optional          | string         | "StorageV2"      | Defines the Kind of account. Options: BlobStorage, BlockBlobStorage, FileStorage, Storage, StorageV2 |
-| account_tier                        | Required          | string         | "Standard"       | Tier for the storage account. Options: Standard, Premium.                                           |
-| account_replication_type           | Required          | string         | "LRS"            | Replication type. Options: LRS, GRS, RAGRS, ZRS, GZRS, RAGZRS.                                      |
+| name                                | REQUIRED          | string         | n/a              | Specifies the name of the storage account. Must be unique and lowercase alphanumeric.               |
+| storage_account_resource_group_name | REQUIRED          | string         | n/a              | The name of the resource group in which to create the storage account.                              |
+| location                            | REQUIRED          | string         | n/a              | Azure region where the resource exists.                                                             |
+| account_tier                        | REQUIRED          | string         | "Standard"       | Tier for the storage account. Options: Standard, Premium.                                           |
+| account_replication_type           | REQUIRED          | string         | "LRS"            | Replication type. Options: LRS, GRS, RAGRS, ZRS, GZRS, RAGZRS.  
+| account_kind                        | Optional          | string         | "StorageV2"      | Defines the Kind of account. Options: BlobStorage, BlockBlobStorage, FileStorage, Storage, StorageV2 |                                    |
 | cross_tenant_replication_enabled    | Optional          | bool           | false            | Should cross Tenant replication be enabled?                                                         |
 | access_tier                         | Optional          | string         | "Hot"            | Access tier for BlobStorage, FileStorage, StorageV2. Options: Hot, Cool, Cold, Premium.             |
 | edge_zone                           | Optional          | string         | ""               | Edge Zone within the Azure Region.                                                                  |

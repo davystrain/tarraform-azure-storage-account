@@ -269,7 +269,8 @@ variable "blobs" {
   description = "List of storage blobs with optional metadata and content type."
   type = list(object({
     name                   = string
-    container_name         = string
+    storage_account_name   = string
+    storage_container_name = string
     type                   = string
     access_tier            = optional(string)
     cache_control          = optional(string)

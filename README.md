@@ -1,3 +1,7 @@
+# Azure Storage Account Terraform Module
+
+This repository contains a reusable Terraform module for deploying and managing Azure Storage Accounts. The module supports the creation of storage queues and tables, and exposes a wide range of configuration arguments to enable flexible and secure storage deployments in Azure.
+
 ## Input Arguments
 
 | Name                                | Optional/Required | Type           | Default Setting | Short Description                                                                                   |

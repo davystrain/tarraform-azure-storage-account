@@ -277,12 +277,12 @@ variable "containers" {
 variable "blobs" {
   description = "List of storage blobs with optional metadata and content type."
   type = list(object({
-    name             = string
-    container_name   = string
-    type             = string
-    source           = optional(string)
-    content_type     = optional(string)
-    metadata         = optional(map(string))
+    name           = string
+    container_name = string
+    type           = string
+    source         = optional(string)
+    content_type   = optional(string)
+    metadata       = optional(map(string))
   }))
   default = []
 }

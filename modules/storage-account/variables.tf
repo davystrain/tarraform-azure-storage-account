@@ -212,13 +212,13 @@ variable "blob_properties" {
       days                     = number
       permanent_delete_enabled = bool
     })
-    cors_rule = list(object({
+    cors_rule = optional(list(object({
       allowed_headers    = list(string)
       allowed_methods    = list(string)
       allowed_origins    = list(string)
       exposed_headers    = list(string)
       max_age_in_seconds = number
-    }))
+    })))
   })
 }
 
@@ -268,12 +268,19 @@ variable "containers" {
 variable "blobs" {
   description = "List of storage blobs with optional metadata and content type."
   type = list(object({
-    name           = string
-    container_name = string
-    type           = string
-    source         = optional(string)
-    content_type   = optional(string)
-    metadata       = optional(map(string))
+    name                   = string
+    container_name         = string
+    type                   = string
+    access_tier            = optional(string)
+    cache_control          = optional(string)
+    content_type           = optional(string)
+    content_md5            = optional(string)
+    encryption_scope       = optional(string)
+    source                 = optional(string)
+    source_content         = optional(string)
+    source_uri             = optional(string)
+    parallelism            = optional(number)
+    metadata               = optional(map(string))
   }))
   default = []
 }

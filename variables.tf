@@ -212,7 +212,29 @@ variable "blob_properties" {
       days                     = number
       permanent_delete_enabled = bool
     })
+    cors_rule = optional(list(object({
+      allowed_headers    = list(string)
+      allowed_methods    = list(string)
+      allowed_origins    = list(string)
+      exposed_headers    = list(string)
+      max_age_in_seconds = number
+    })))
   })
+}
+
+variable "queue_properties" {
+  description = "Queue properties block."
+  type = object({
+    cors_rule = list(object({
+      allowed_headers    = list(string)
+      allowed_methods    = list(string)
+      allowed_origins    = list(string)
+      exposed_headers    = list(string)
+      max_age_in_seconds = number
+    }))
+    # Add other queue_properties fields here as needed
+  })
+  default = null
 }
 
 variable "network_rules" {
@@ -243,7 +265,28 @@ variable "share_properties" {
   })
 }
 
-variable "queue_names" {
+variable "containers" {
+  description = "List of storage containers with optional access types and metadata."
+  type = list(object({
+    name                  = string
+    container_access_type = optional(string, "private")
+    metadata              = optional(map(string))
+  }))
+  default = []
+}
+variable "blobs" {
+  description = "List of storage blobs with optional metadata and content type."
+  type = list(object({
+    name             = string
+    container_name   = string
+    type             = string
+    source           = optional(string)
+    content_type     = optional(string)
+    metadata         = optional(map(string))
+  }))
+  default = []
+}
+variable "queues" {
   type = list(object({
     name     = string
     metadata = optional(map(string))

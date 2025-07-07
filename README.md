@@ -13,6 +13,7 @@ This repository contains a reusable Terraform module for deploying and managing 
 
 This module is data driven using a yaml data file
 
+```hcl
 locals {
   storage_vars = yamldecode(file("${path.module}/data/storage_vars.yaml"))
 }
@@ -82,5 +83,4 @@ module "storage" {
 
 > **Note:** Some complex arguments (like `blob_properties`, `network_rules`, etc.) have their own nested required/optional fields. See the [Terraform documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account)
 
-```yaml
 

@@ -49,6 +49,7 @@ resource "azurerm_storage_account" "this" {
   # table_encryption_key_type         = var.table_encryption_key_type
   # tags                              = var.tags
 
+
   blob_properties {
     change_feed_enabled           = var.blob_properties.change_feed_enabled
     change_feed_retention_in_days = var.blob_properties.change_feed_retention_in_days
@@ -64,8 +65,18 @@ resource "azurerm_storage_account" "this" {
       days                     = var.blob_properties.delete_retention_policy.days
       permanent_delete_enabled = var.blob_properties.delete_retention_policy.permanent_delete_enabled
     }
-  }
 
+    dynamic "cors_rule" {
+      for_each = try(var.blob_properties.cors_rule, [])
+      content {
+        allowed_headers    = cors_rule.value.allowed_headers
+        allowed_methods    = cors_rule.value.allowed_methods
+        allowed_origins    = cors_rule.value.allowed_origins
+        exposed_headers    = cors_rule.value.exposed_headers
+        max_age_in_seconds = cors_rule.value.max_age_in_seconds
+      }
+    }
+  }
   network_rules {
     bypass                     = var.network_rules.bypass
     default_action             = var.network_rules.default_action
@@ -79,39 +90,68 @@ resource "azurerm_storage_account" "this" {
     publish_microsoft_endpoints = var.routing.publish_microsoft_endpoints
   }
 
-  share_properties {
-    retention_policy {
-      days = var.share_properties.retention_policy.days
+  dynamic "queue_properties" {
+    for_each = var.queue_properties == null ? [] : [var.queue_properties]
+    content {
+      dynamic "cors_rule" {
+        for_each = try(queue_properties.value.cors_rule, [])
+        content {
+          allowed_headers    = cors_rule.value.allowed_headers
+          allowed_methods    = cors_rule.value.allowed_methods
+          allowed_origins    = cors_rule.value.allowed_origins
+          exposed_headers    = cors_rule.value.exposed_headers
+          max_age_in_seconds = cors_rule.value.max_age_in_seconds
+        }
+      }
+      # Add other queue_properties fields here as needed
     }
   }
 }
 
-# resource "azurerm_storage_queue" "this" {
-#   count                = length(var.queue_names)
-#   name                 = var.queue_names[count.index].name
-#   storage_account_name = azurerm_storage_account.this.name
+resource "azurerm_storage_container" "reusable_module" {
+  count                 = length(var.containers)
+  name                  = var.containers[count.index].name
+  storage_account_id    = azurerm_storage_account.reusable_module.name
+  container_access_type = try(var.containers[count.index].container_access_type, "private")
+  metadata              = try(var.containers[count.index].metadata, null)
+}
 
-#   metadata = try(var.queue_names[count.index].metadata, null)
-# }
+resource "azurerm_storage_blob" "reusable_module" {
+  count                  = length(var.blobs)
+  name                   = var.blobs[count.index].name
+  storage_account_name   = azurerm_storage_account.reusable_module.name
+  storage_container_name = var.blobs[count.index].container_name
+  type                   = var.blobs[count.index].type
+  source                 = var.blobs[count.index].source
+  content_type           = try(var.blobs[count.index].content_type, null)
+  metadata               = try(var.blobs[count.index].metadata, null)
+}
+resource "azurerm_storage_queue" "reusable_module" {
+  count                = length(var.queues)
+  name                 = var.queues[count.index].name
+  storage_account_name = azurerm_storage_account.reusable_module.name
 
-# resource "azurerm_storage_table" "this" {
-#   count                = length(var.tables)
-#   name                 = var.tables[count.index].name
-#   storage_account_name = azurerm_storage_account.this.name
+  metadata = try(var.queues[count.index].metadata, null)
+}
 
-#   dynamic "acl" {
-#     for_each = try(var.tables[count.index].acl, [])
-#     content {
-#       id = acl.value.id
+resource "azurerm_storage_table" "reusable_module" {
+  count                = length(var.tables)
+  name                 = var.tables[count.index].name
+  storage_account_name = azurerm_storage_account.reusable_module.name
 
-#       dynamic "access_policy" {
-#         for_each = acl.value.access_policy != null ? [acl.value.access_policy] : []
-#         content {
-#           expiry      = access_policy.value.expiry
-#           permissions = access_policy.value.permissions
-#           start       = access_policy.value.start
-#         }
-#       }
-#     }
-#   }
-# }
+  dynamic "acl" {
+    for_each = try(var.tables[count.index].acl, [])
+    content {
+      id = acl.value.id
+
+      dynamic "access_policy" {
+        for_each = acl.value.access_policy != null ? [acl.value.access_policy] : []
+        content {
+          expiry      = access_policy.value.expiry
+          permissions = access_policy.value.permissions
+          start       = access_policy.value.start
+        }
+      }
+    }
+  }
+}

@@ -63,7 +63,6 @@ module "storage" {
 | blob_properties                     | Optional          | object         | null             | Blob properties block.                                                                              |
 | queue_properties                    | Optional          | object         | null             | Queue properties block.                                                                             |
 | static_website                      | Optional          | object         | null             | Static website block.                                                                               |
-| share_properties                    | Optional          | object         | null             | Share properties block.                                                                             |
 | network_rules                       | Optional          | object         | null             | Network rules block.                                                                                |
 | large_file_share_enabled            | Optional          | bool           | false            | Are Large File Shares enabled?                                                                      |
 | local_user_enabled                  | Optional          | bool           | true             | Is Local User Enabled?                                                                              |

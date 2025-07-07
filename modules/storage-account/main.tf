@@ -15,7 +15,7 @@ terraform {
 #   value = azurerm_resource_group.rg
 # }
 
-resource "azurerm_storage_account" "this" {
+resource "azurerm_storage_account" "reusable_module" {
   name                              = var.name
   resource_group_name               = var.resource_group_name
   location                          = var.location

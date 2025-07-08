@@ -3,11 +3,6 @@ variable "resource_group_name" {
   type        = string
 }
 
-# variable "storage_account_name" {
-#   description = "The name of the storage account."
-#   type        = string
-# }
-
 variable "location" {
   description = "The Azure region where the storage account is located."
   type        = string

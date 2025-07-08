@@ -45,13 +45,7 @@ variable "account_tier" {
 variable "allow_nested_items_to_be_public" {
   description = "Allow nested items to be public."
   type        = bool
-  default     = true
-}
-
-variable "allowed_copy_scope" {
-  description = "Allowed copy scope."
-  type        = string
-  default     = ""
+  default     = false
 }
 
 variable "cross_tenant_replication_enabled" {
@@ -66,18 +60,6 @@ variable "default_to_oauth_authentication" {
   default     = true
 }
 
-variable "dns_endpoint_type" {
-  description = "DNS endpoint type."
-  type        = string
-  default     = "Standard"
-}
-
-variable "edge_zone" {
-  description = "Edge zone."
-  type        = string
-  default     = ""
-}
-
 variable "https_traffic_only_enabled" {
   description = "Enable HTTPS traffic only."
   type        = bool
@@ -87,25 +69,13 @@ variable "https_traffic_only_enabled" {
 variable "infrastructure_encryption_enabled" {
   description = "Enable infrastructure encryption."
   type        = bool
-  default     = false
-}
-
-variable "is_hns_enabled" {
-  description = "Enable hierarchical namespace."
-  type        = bool
-  default     = false
-}
-
-variable "large_file_share_enabled" {
-  description = "Enable large file share."
-  type        = bool
   default     = true
 }
 
 variable "local_user_enabled" {
   description = "Enable local user."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "min_tls_version" {

@@ -86,7 +86,7 @@ resource "azurerm_storage_account" "reusable_module" {
 resource "azurerm_storage_container" "reusable_module" {
   count                 = length(var.containers)
   name                  = var.containers[count.index].name
-  storage_account_id    = azurerm_storage_account.reusable_module.name
+  storage_account_id    = azurerm_storage_account.reusable_module.id
   container_access_type = try(var.containers[count.index].container_access_type, "private")
   metadata              = try(var.containers[count.index].metadata, null)
 }

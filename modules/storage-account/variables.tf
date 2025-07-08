@@ -269,14 +269,6 @@ variable "tables" {
   description = "List of storage tables with optional ACLs."
   type = list(object({
     name = string
-    acl = optional(list(object({
-      id = string
-      access_policy = optional(object({
-        expiry      = string
-        permissions = string
-        start       = string
-      }))
-    })))
   }))
   default = []
 }

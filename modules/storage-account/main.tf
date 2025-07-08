@@ -45,7 +45,7 @@ resource "azurerm_storage_account" "reusable_module" {
   # secondary_blob_connection_string  = var.secondary_blob_connection_string
   # secondary_connection_string       = var.secondary_connection_string
   # sftp_enabled                      = var.sftp_enabled
-  # shared_access_key_enabled         = var.shared_access_key_enabled
+  shared_access_key_enabled         = var.shared_access_key_enabled
   # table_encryption_key_type         = var.table_encryption_key_type
   # tags                              = var.tags
 

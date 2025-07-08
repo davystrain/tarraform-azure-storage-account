@@ -197,6 +197,27 @@ variable "table_encryption_key_type" {
   default     = "Service"
 }
 
+variable "blob_properties" {
+  description = "Blob properties block."
+  type = object({
+    change_feed_enabled           = bool
+    change_feed_retention_in_days = number
+    default_service_version       = string
+    last_access_time_enabled      = bool
+    versioning_enabled            = bool
+    container_delete_retention_policy = object({
+      days = number
+    })
+    delete_retention_policy = object({
+      days                     = number
+      permanent_delete_enabled = bool
+    })
+    restore_policy = object({
+      days = number
+    })
+  })
+}
+
 variable "network_rules" {
   description = "Network rules block."
   type = object({
@@ -232,16 +253,7 @@ variable "blobs" {
     storage_account_name   = string
     storage_container_name = string
     type                   = string
-    access_tier            = optional(string)
-    cache_control          = optional(string)
-    content_type           = optional(string)
-    content_md5            = optional(string)
     encryption_scope       = optional(string)
-    source                 = optional(string)
-    source_content         = optional(string)
-    source_uri             = optional(string)
-    parallelism            = optional(number)
-    metadata               = optional(map(string))
   }))
   default = []
 }

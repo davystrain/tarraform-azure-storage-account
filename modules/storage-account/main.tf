@@ -56,7 +56,6 @@ resource "azurerm_storage_account" "reusable_module" {
     default_service_version       = var.blob_properties.default_service_version
     last_access_time_enabled      = var.blob_properties.last_access_time_enabled
     versioning_enabled            = var.blob_properties.versioning_enabled
-
     container_delete_retention_policy {
       days = var.blob_properties.container_delete_retention_policy.days
     }
@@ -64,6 +63,9 @@ resource "azurerm_storage_account" "reusable_module" {
     delete_retention_policy {
       days                     = var.blob_properties.delete_retention_policy.days
       permanent_delete_enabled = var.blob_properties.delete_retention_policy.permanent_delete_enabled
+    }
+    restore_policy {
+      days = var.blob_properties.restore_policy.days
     }
   }
   network_rules {
@@ -95,16 +97,7 @@ resource "azurerm_storage_blob" "reusable_module" {
   storage_account_name   = azurerm_storage_account.reusable_module.name
   storage_container_name = var.blobs[count.index].storage_container_name
   type                   = var.blobs[count.index].type
-  source                 = try(var.blobs[count.index].source, null)
-  source_content         = try(var.blobs[count.index].source_content, null)
-  source_uri             = try(var.blobs[count.index].source_uri, null)
-  access_tier            = try(var.blobs[count.index].access_tier, null)
-  cache_control          = try(var.blobs[count.index].cache_control, null)
-  content_type           = try(var.blobs[count.index].content_type, null)
-  content_md5            = try(var.blobs[count.index].content_md5, null)
-  encryption_scope       = try(var.blobs[count.index].encryption_scope, null)
-  parallelism            = try(var.blobs[count.index].parallelism, null)
-  metadata               = try(var.blobs[count.index].metadata, null)
+  encryption_scope       = var.blobs[count.index].encryption_scope
 }
 resource "azurerm_storage_queue" "reusable_module" {
   count                = length(var.queues)

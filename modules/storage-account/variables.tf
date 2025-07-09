@@ -159,7 +159,8 @@ variable "queues" {
 variable "tables" {
   description = "List of storage tables"
   type = list(object({
-    name = string
+    name                 = string
+    storage_account_name = string
   }))
   default = []
 }

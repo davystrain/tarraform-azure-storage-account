@@ -1,3 +1,8 @@
+variable "name" {
+  description = "The name of the storage account."
+  type        = string
+}
+
 variable "resource_group_name" {
   description = "The name of the resource group where the storage account is located."
   type        = string
@@ -6,17 +11,13 @@ variable "resource_group_name" {
 variable "location" {
   description = "The Azure region where the storage account is located."
   type        = string
-}
-
-variable "tags" {
-  description = "A map of tags to assign to the storage account."
-  type        = map(string)
-  default     = {}
+  default     = "australiaeast"
 }
 
 variable "access_tier" {
   description = "The access tier for the storage account."
   type        = string
+  default     = "Hot"
 }
 
 variable "account_kind" {
@@ -60,92 +61,14 @@ variable "https_traffic_only_enabled" {
   type        = bool
   default     = true
 }
-
-variable "infrastructure_encryption_enabled" {
-  description = "Enable infrastructure encryption."
-  type        = bool
-  default     = true
-}
-
-variable "local_user_enabled" {
-  description = "Enable local user."
-  type        = bool
-  default     = false
-}
-
 variable "min_tls_version" {
   description = "Minimum TLS version."
   type        = string
   default     = "TLS1_2"
 }
 
-variable "name" {
-  description = "The name of the storage account."
-  type        = string
-}
-
-variable "nfsv3_enabled" {
-  description = "Enable NFSv3."
-  type        = bool
-  default     = false
-}
-
-variable "primary_access_key" {
-  description = "Primary access key."
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
-variable "primary_blob_connection_string" {
-  description = "Primary blob connection string."
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
-variable "primary_connection_string" {
-  description = "Primary connection string."
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
 variable "public_network_access_enabled" {
   description = "Enable public network access."
-  type        = bool
-  default     = true
-}
-
-variable "queue_encryption_key_type" {
-  description = "Queue encryption key type."
-  type        = string
-  default     = "Service"
-}
-
-variable "secondary_access_key" {
-  description = "Secondary access key."
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
-variable "secondary_blob_connection_string" {
-  description = "Secondary blob connection string."
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
-variable "secondary_connection_string" {
-  description = "Secondary connection string."
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
-variable "sftp_enabled" {
-  description = "Enable SFTP."
   type        = bool
   default     = false
 }
@@ -155,11 +78,10 @@ variable "shared_access_key_enabled" {
   type        = bool
   default     = false
 }
-
-variable "table_encryption_key_type" {
-  description = "Table encryption key type."
-  type        = string
-  default     = "Service"
+variable "tags" {
+  description = "A map of tags to assign to the storage account."
+  type        = map(string)
+  default     = {}
 }
 
 variable "blob_properties" {

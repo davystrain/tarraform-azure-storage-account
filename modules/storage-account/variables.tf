@@ -207,7 +207,6 @@ variable "containers" {
   type = list(object({
     name                  = string
     container_access_type = optional(string, "private")
-    metadata              = optional(map(string))
   }))
   default = []
 }

@@ -90,7 +90,6 @@ resource "azurerm_storage_container" "reusable_module" {
   name                  = var.containers[count.index].name
   storage_account_id    = azurerm_storage_account.reusable_module.id
   container_access_type = try(var.containers[count.index].container_access_type, "private")
-  metadata              = try(var.containers[count.index].metadata, null)
 }
 
 resource "azurerm_storage_blob" "reusable_module" {

@@ -91,23 +91,23 @@ variable "tags" {
 
 variable "blob_properties" {
   description = "Blob properties block."
-  type = object({
+  type = optional(object({
     change_feed_enabled           = bool
     change_feed_retention_in_days = number
     default_service_version       = string
     last_access_time_enabled      = bool
     versioning_enabled            = bool
-    container_delete_retention_policy = object({
+    container_delete_retention_policy = optional(object({
       days = number
-    })
-    delete_retention_policy = object({
+    }))
+    delete_retention_policy = optional(object({
       days                     = number
       permanent_delete_enabled = bool
-    })
-    restore_policy = object({
+    }))
+    restore_policy = optional(object({
       days = number
-    })
-  })
+    }))
+  }))
 }
 
 variable "network_rules" {

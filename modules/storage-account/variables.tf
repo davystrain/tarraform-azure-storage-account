@@ -97,16 +97,16 @@ variable "blob_properties" {
     default_service_version       = string
     last_access_time_enabled      = bool
     versioning_enabled            = bool
-    container_delete_retention_policy = optional(object({
+    container_delete_retention_policy = object({
       days = number
-    }))
-    delete_retention_policy = optional(object({
+    })
+    delete_retention_policy = object({
       days                     = number
       permanent_delete_enabled = bool
-    }))
-    restore_policy = optional(object({
+    })
+    restore_policy = object({
       days = number
-    }))
+    })
   })
   default = null
 }
@@ -131,7 +131,7 @@ variable "routing" {
 }
 
 variable "containers" {
-  description = "List of storage containers with optional access types and metadata."
+  description = "List of storage containers"
   type = list(object({
     name                  = string
     container_access_type = optional(string, "private")
@@ -139,7 +139,7 @@ variable "containers" {
   default = []
 }
 variable "blobs" {
-  description = "List of storage blobs with optional metadata and content type."
+  description = "List of storage blobs"
   type = list(object({
     name                   = string
     storage_account_name   = string
@@ -151,14 +151,13 @@ variable "blobs" {
 }
 variable "queues" {
   type = list(object({
-    name     = string
-    metadata = optional(map(string))
+    name = string
   }))
   default = []
 }
 
 variable "tables" {
-  description = "List of storage tables with optional ACLs."
+  description = "List of storage tables"
   type = list(object({
     name = string
   }))

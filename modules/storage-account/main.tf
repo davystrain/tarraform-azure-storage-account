@@ -80,7 +80,6 @@ resource "azurerm_storage_blob" "reusable_module" {
   storage_account_name   = azurerm_storage_account.reusable_module.name
   storage_container_name = var.blobs[count.index].storage_container_name
   type                   = var.blobs[count.index].type
-  encryption_scope       = var.blobs[count.index].encryption_scope
 }
 
 resource "azurerm_storage_queue" "reusable_module" {

@@ -145,7 +145,6 @@ variable "blobs" {
     storage_account_name   = string
     storage_container_name = string
     type                   = string
-    encryption_scope       = optional(string)
   }))
   default = []
 }

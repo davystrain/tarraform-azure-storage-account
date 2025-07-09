@@ -20,12 +20,6 @@ variable "access_tier" {
   default     = "Hot"
 }
 
-variable "account_kind" {
-  description = "The kind of storage account."
-  type        = string
-  default     = "StorageV2"
-}
-
 variable "account_replication_type" {
   description = "The replication type for the storage account."
   type        = string
@@ -36,6 +30,11 @@ variable "account_tier" {
   description = "The performance tier for the storage account."
   type        = string
   default     = "Standard"
+}
+variable "account_kind" {
+  description = "The kind of storage account."
+  type        = string
+  default     = "StorageV2"
 }
 
 variable "allow_nested_items_to_be_public" {
@@ -75,6 +74,12 @@ variable "public_network_access_enabled" {
 
 variable "shared_access_key_enabled" {
   description = "Enable shared access key."
+  type        = bool
+  default     = false
+}
+
+variable "local_user_enabled" {
+  description = "Enable local user authentication."
   type        = bool
   default     = false
 }

@@ -56,6 +56,7 @@ resource "azurerm_storage_account" "reusable_module" {
     default_service_version       = var.blob_properties.default_service_version
     last_access_time_enabled      = var.blob_properties.last_access_time_enabled
     versioning_enabled            = var.blob_properties.versioning_enabled
+
     container_delete_retention_policy {
       days = var.blob_properties.container_delete_retention_policy.days
     }
@@ -64,10 +65,12 @@ resource "azurerm_storage_account" "reusable_module" {
       days                     = var.blob_properties.delete_retention_policy.days
       permanent_delete_enabled = var.blob_properties.delete_retention_policy.permanent_delete_enabled
     }
+
     restore_policy {
       days = var.blob_properties.restore_policy.days
     }
   }
+
   network_rules {
     bypass                     = var.network_rules.bypass
     default_action             = var.network_rules.default_action
@@ -80,7 +83,6 @@ resource "azurerm_storage_account" "reusable_module" {
     publish_internet_endpoints  = var.routing.publish_internet_endpoints
     publish_microsoft_endpoints = var.routing.publish_microsoft_endpoints
   }
-
 }
 
 resource "azurerm_storage_container" "reusable_module" {
@@ -99,6 +101,7 @@ resource "azurerm_storage_blob" "reusable_module" {
   type                   = var.blobs[count.index].type
   encryption_scope       = var.blobs[count.index].encryption_scope
 }
+
 resource "azurerm_storage_queue" "reusable_module" {
   count                = length(var.queues)
   name                 = var.queues[count.index].name

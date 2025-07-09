@@ -91,7 +91,7 @@ variable "tags" {
 
 variable "blob_properties" {
   description = "Blob properties block."
-  type = optional(object({
+  type = object({
     change_feed_enabled           = bool
     change_feed_retention_in_days = number
     default_service_version       = string
@@ -107,7 +107,8 @@ variable "blob_properties" {
     restore_policy = optional(object({
       days = number
     }))
-  }))
+  })
+  default = null
 }
 
 variable "network_rules" {

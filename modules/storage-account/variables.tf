@@ -150,7 +150,8 @@ variable "blobs" {
 }
 variable "queues" {
   type = list(object({
-    name = string
+    name                 = string
+    storage_account_name = string
   }))
   default = []
 }

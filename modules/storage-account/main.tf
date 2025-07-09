@@ -80,7 +80,7 @@ resource "azurerm_storage_blob" "reusable_module" {
   storage_account_name   = azurerm_storage_account.reusable_module.name
   storage_container_name = var.blobs[count.index].storage_container_name
   type                   = var.blobs[count.index].type
-  
+
   depends_on = [
     azurerm_storage_container.reusable_module
   ]

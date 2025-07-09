@@ -16,22 +16,22 @@ terraform {
 # }
 
 resource "azurerm_storage_account" "reusable_module" {
-  name                              = var.name
-  resource_group_name               = var.resource_group_name
-  location                          = var.location
-  access_tier                       = var.access_tier
-  account_replication_type          = var.account_replication_type
-  account_tier                      = var.account_tier
-  account_kind                      = var.account_kind
-  allow_nested_items_to_be_public   = var.allow_nested_items_to_be_public
-  cross_tenant_replication_enabled  = var.cross_tenant_replication_enabled
-  default_to_oauth_authentication   = var.default_to_oauth_authentication
-  https_traffic_only_enabled        = var.https_traffic_only_enabled
-  min_tls_version                   = var.min_tls_version
-  public_network_access_enabled     = var.public_network_access_enabled
-  shared_access_key_enabled         = var.shared_access_key_enabled
-  local_user_enabled                = var.local_user_enabled
-  tags                              = var.tags
+  name                             = var.name
+  resource_group_name              = var.resource_group_name
+  location                         = var.location
+  access_tier                      = var.access_tier
+  account_replication_type         = var.account_replication_type
+  account_tier                     = var.account_tier
+  account_kind                     = var.account_kind
+  allow_nested_items_to_be_public  = var.allow_nested_items_to_be_public
+  cross_tenant_replication_enabled = var.cross_tenant_replication_enabled
+  default_to_oauth_authentication  = var.default_to_oauth_authentication
+  https_traffic_only_enabled       = var.https_traffic_only_enabled
+  min_tls_version                  = var.min_tls_version
+  public_network_access_enabled    = var.public_network_access_enabled
+  shared_access_key_enabled        = var.shared_access_key_enabled
+  local_user_enabled               = var.local_user_enabled
+  tags                             = var.tags
   blob_properties {
     change_feed_enabled           = var.blob_properties.change_feed_enabled
     change_feed_retention_in_days = var.blob_properties.change_feed_retention_in_days

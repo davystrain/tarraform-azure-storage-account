@@ -36,7 +36,7 @@ resource "azurerm_storage_account" "reusable_module" {
     for_each = var.blob_properties == null ? [] : [var.blob_properties]
     content {
       change_feed_enabled            = var.blob_properties.change_feed_enabled
-      change_feed_retention_in_days = var.blob_properties.change_feed_retention_in_days
+      change_feed_retention_in_days  = var.blob_properties.change_feed_retention_in_days
       default_service_version        = var.blob_properties.default_service_version
       last_access_time_enabled       = var.blob_properties.last_access_time_enabled
       versioning_enabled             = var.blob_properties.versioning_enabled
@@ -50,7 +50,7 @@ resource "azurerm_storage_account" "reusable_module" {
         permanent_delete_enabled = var.blob_properties.delete_retention_policy.permanent_delete_enabled
       }
 
-      restore_policy {
+      restore_policy { 
         days = var.blob_properties.restore_policy.days
       }
     }

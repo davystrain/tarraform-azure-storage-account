@@ -32,26 +32,30 @@ resource "azurerm_storage_account" "reusable_module" {
   shared_access_key_enabled        = var.shared_access_key_enabled
   local_user_enabled               = var.local_user_enabled
   tags                             = var.tags
-  blob_properties {
-    change_feed_enabled           = var.blob_properties.change_feed_enabled
-    change_feed_retention_in_days = var.blob_properties.change_feed_retention_in_days
-    default_service_version       = var.blob_properties.default_service_version
-    last_access_time_enabled      = var.blob_properties.last_access_time_enabled
-    versioning_enabled            = var.blob_properties.versioning_enabled
+  dynamic "blob_properties" {
+    for_each = var.blob_properties == null ? [] : [var.blob_properties]
+    content {
+      change_feed_enabled            = var.blob_properties.change_feed_enabled
+      change_feed_retention_in_days = var.blob_properties.change_feed_retention_in_days
+      default_service_version        = var.blob_properties.default_service_version
+      last_access_time_enabled       = var.blob_properties.last_access_time_enabled
+      versioning_enabled             = var.blob_properties.versioning_enabled
 
-    container_delete_retention_policy {
-      days = var.blob_properties.container_delete_retention_policy.days
-    }
+      container_delete_retention_policy {
+        days = var.blob_properties.container_delete_retention_policy.days
+      }
 
-    delete_retention_policy {
-      days                     = var.blob_properties.delete_retention_policy.days
-      permanent_delete_enabled = var.blob_properties.delete_retention_policy.permanent_delete_enabled
-    }
+      delete_retention_policy {
+        days                     = var.blob_properties.delete_retention_policy.days
+        permanent_delete_enabled = var.blob_properties.delete_retention_policy.permanent_delete_enabled
+      }
 
-    restore_policy {
-      days = var.blob_properties.restore_policy.days
+      restore_policy {
+        days = var.blob_properties.restore_policy.days
+      }
     }
   }
+
 
   network_rules {
     bypass                     = var.network_rules.bypass

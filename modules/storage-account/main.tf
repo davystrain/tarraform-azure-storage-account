@@ -2,18 +2,10 @@ terraform {
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
+      version = ">= 4.35.0"
     }
   }
 }
-
-# resource "azurerm_resource_group" "rg" {
-#   name     = var.name
-#   location = var.location
-# }
-
-# output "resource_group" {
-#   value = azurerm_resource_group.rg
-# }
 
 resource "azurerm_storage_account" "reusable_module" {
   name                             = var.name

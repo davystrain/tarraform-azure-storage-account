@@ -66,12 +66,6 @@ resource "azurerm_storage_account" "reusable_module" {
     virtual_network_subnet_ids = var.network_rules.virtual_network_subnet_ids
     }
   }
-
-  routing {
-    choice                      = var.routing.choice
-    publish_internet_endpoints  = var.routing.publish_internet_endpoints
-    publish_microsoft_endpoints = var.routing.publish_microsoft_endpoints
-  }
 }
 
 resource "azurerm_storage_container" "reusable_module" {

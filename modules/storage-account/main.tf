@@ -57,11 +57,14 @@ resource "azurerm_storage_account" "reusable_module" {
   }
 
 
-  network_rules {
+  dynamic network_rules {
+    for_each = var.network_rules == null ? [] : [var.network_rules]
+    content {
     bypass                     = var.network_rules.bypass
     default_action             = var.network_rules.default_action
     ip_rules                   = var.network_rules.ip_rules
     virtual_network_subnet_ids = var.network_rules.virtual_network_subnet_ids
+    }
   }
 
   routing {

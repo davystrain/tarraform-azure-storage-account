@@ -116,7 +116,7 @@ variable "network_rules" {
   description = "Network rules block."
   type = object({
     bypass                     = list(string)
-    default_action             = string
+    default_action             = optional(string, "Deny")
     ip_rules                   = list(string)
     virtual_network_subnet_ids = list(string)
   })

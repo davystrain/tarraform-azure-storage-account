@@ -92,11 +92,11 @@ variable "tags" {
 variable "blob_properties" {
   description = "Blob properties block."
   type = object({
-    change_feed_enabled            = optional(bool, false)
-    change_feed_retention_in_days  = optional(number, 7)
-    default_service_version        = optional(string, "2020-06-12")
-    last_access_time_enabled       = optional(bool, false)
-    versioning_enabled             = optional(bool, false)
+    change_feed_enabled            = bool
+    change_feed_retention_in_days  = number
+    default_service_version        = string
+    last_access_time_enabled       = bool
+    versioning_enabled             = bool
     container_delete_retention_policy = object({
       days = number
     })

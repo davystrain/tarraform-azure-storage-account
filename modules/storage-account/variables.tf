@@ -122,15 +122,6 @@ variable "network_rules" {
   })
 }
 
-variable "routing" {
-  description = "Routing block."
-  type = object({
-    choice                      = string
-    publish_internet_endpoints  = bool
-    publish_microsoft_endpoints = bool
-  })
-}
-
 variable "containers" {
   description = "List of storage containers"
   type = list(object({

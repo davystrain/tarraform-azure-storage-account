@@ -96,7 +96,7 @@ module "storage" {
 **Note:** A single storage account can contain multiple containers, each of which can store multiple blobs. Additionally, the same storage account can also host multiple queues and tables.
 ```yaml
 storage_accounts:
-  storageaccdavystrainv3:
+  storageaccountone: # Storage account name
     resource_group_name: "terraform"
     location: "australiaeast"
     access_tier: "Hot"

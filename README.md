@@ -31,9 +31,25 @@ module "storage" {
   account_replication_type = each.value.account_replication_type
   account_tier             = each.value.account_tier
 
-## Optional fields
-  account_kind             = try(each.value["account_kind"], null)
+  # Optional arguments
+  account_kind                     = try(each.value["account_kind"], null)
+  allow_nested_items_to_be_public  = try(each.value["allow_nested_items_to_be_public"], null)
+  cross_tenant_replication_enabled = try(each.value["cross_tenant_replication_enabled"], null)
+  default_to_oauth_authentication  = try(each.value["default_to_oauth_authentication"], null)
+  https_traffic_only_enabled       = try(each.value["https_traffic_only_enabled"], null)
+  min_tls_version                  = try(each.value["min_tls_version"], null)
+  public_network_access_enabled    = try(each.value["public_network_access_enabled"], null)
+  shared_access_key_enabled        = try(each.value["shared_access_key_enabled"], null)
+  local_user_enabled               = try(each.value["local_user_enabled"], null)
 
+  blob_properties = try(each.value["blob_properties"], null)
+  network_rules   = try(each.value["network_rules"], null)
+  tags            = try(each.value["tags"], {})
+
+  containers = try(each.value["containers"], [])
+  blobs      = try(each.value["blobs"], [])
+  queues     = try(each.value["queues"], [])
+  tables     = try(each.value["tables"], [])
 }
 
 ```

@@ -60,7 +60,7 @@ module "storage" {
 | blob_properties                     | Optional          | object         | null             | Blob properties block.                                                                              |
 | network_rules                       | Optional          | object         | Deny             | Network rules block.                                                                                |
 | local_user_enabled                  | Optional          | bool           | false            | Is Local User Enabled?                                                                              |
-| dns_endpoint_type                   | Optional          | string         | "Standard"       | DNS endpoint type. Options: Standard, AzureDnsZone.                                                 |
+| dns_endpoint_type                   | Optional          | string         | "Standard"       | DNS endpoint type. Options: Standard (250 storage accounts per subscription per region), AzureDnsZone (Create additional 5000 Azure Storage accounts within your Subscription).                                                 |
 | tags                                | Optional          | map(string)    | {}               | Mapping of tags to assign to the resource.                                                          |
 | containers                          | Optional          | list(object)   | []               | List of blob containers to create (e.g., [{ name = "container1" }]).                               |
 | blobs                               | Optional          | list(object)   | []               | List of blobs to upload (e.g., [{ name = "file.txt", source = "local/path/file.txt" }]).            |
@@ -69,5 +69,9 @@ module "storage" {
 
 > **Note:** Some complex arguments (like `blob_properties`, `network_rules`, etc.) have their own nested required/optional fields. See the [Terraform documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account)
 
+> Network rules private_link_access block for when the storage account is set to **no public access:**
+> 
+> - `endpoint_resource_id` – **(Required)** The ID of the Azure resource granted access to the storage account.
+> - `endpoint_tenant_id` – **(Optional)** Tenant ID of the resource. Defaults to the current tenant.
 
 

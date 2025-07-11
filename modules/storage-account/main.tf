@@ -107,12 +107,12 @@ resource "azurerm_storage_queue" "reusable_module" {
 #   }
 # }
 
-resource "azapi_resource" "my_table" {
+resource "azapi_resource" "reusable_module_table" {
   count     = length(var.tables)
   type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"
   name      = var.tables[count.index].name
   parent_id = "${azurerm_storage_account.reusable_module.id}/tableServices/default"
-  body      = jsonencode({
+  body      = {
     properties = var.tables[count.index].properties
-  })
+  }
 }

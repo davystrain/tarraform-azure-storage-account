@@ -81,24 +81,34 @@ resource "azurerm_storage_queue" "reusable_module" {
   storage_account_name = azurerm_storage_account.reusable_module.name
 }
 
-resource "azurerm_storage_table" "reusable_module" {
-  count                = length(var.tables)
-  name                 = var.tables[count.index].name
-  storage_account_name = azurerm_storage_account.reusable_module.name
+# resource "azurerm_storage_table" "reusable_module" {
+#   count                = length(var.tables)
+#   name                 = var.tables[count.index].name
+#   storage_account_name = azurerm_storage_account.reusable_module.name
 
-  dynamic "acl" {
-    for_each = try(var.tables[count.index].acl, [])
-    content {
-      id = acl.value.id
+#   dynamic "acl" {
+#     for_each = try(var.tables[count.index].acl, [])
+#     content {
+#       id = acl.value.id
 
-      dynamic "access_policy" {
-        for_each = acl.value.access_policy != null ? [acl.value.access_policy] : []
-        content {
-          expiry      = access_policy.value.expiry
-          permissions = access_policy.value.permissions
-          start       = access_policy.value.start
-        }
-      }
-    }
-  }
+#       dynamic "access_policy" {
+#         for_each = acl.value.access_policy != null ? [acl.value.access_policy] : []
+#         content {
+#           expiry      = access_policy.value.expiry
+#           permissions = access_policy.value.permissions
+#           start       = access_policy.value.start
+#         }
+#       }
+#     }
+#   }
+# }
+
+resource "azapi_resource" "my_table" {
+  count     = length(var.tables)
+  type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"
+  name      = var.tables[count.index].name
+  parent_id = "${azurerm_storage_account.reusable_module.id}/tableServices/default"
+  body      = jsonencode({
+    properties = var.tables[count.index].properties
+  })
 }

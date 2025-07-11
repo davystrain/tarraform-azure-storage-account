@@ -169,7 +169,7 @@ variable "tables" {
   description = "List of storage tables"
   type = list(object({
     name       = string
-    properties = map(any)
+    properties = optional(map(any), {})
   }))
   default = []
 }

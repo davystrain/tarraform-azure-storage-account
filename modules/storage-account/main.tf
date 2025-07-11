@@ -85,4 +85,20 @@ resource "azurerm_storage_table" "reusable_module" {
   count                = length(var.tables)
   name                 = var.tables[count.index].name
   storage_account_name = azurerm_storage_account.reusable_module.name
+
+  dynamic "acl" {
+    for_each = try(var.tables[count.index].acl, [])
+    content {
+      id = acl.value.id
+
+      dynamic "access_policy" {
+        for_each = acl.value.access_policy != null ? [acl.value.access_policy] : []
+        content {
+          expiry      = access_policy.value.expiry
+          permissions = access_policy.value.permissions
+          start       = access_policy.value.start
+        }
+      }
+    }
+  }
 }

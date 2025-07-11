@@ -153,6 +153,14 @@ variable "tables" {
   type = list(object({
     name                 = string
     storage_account_name = string
+    acl = optional(list(object({
+      id = string
+      access_policy = optional(object({
+        expiry      = string
+        permissions = string
+        start       = string
+      }))
+    })))
   }))
   default = []
 }

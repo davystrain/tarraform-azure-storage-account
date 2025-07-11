@@ -31,7 +31,7 @@ resource "azurerm_storage_account" "reusable_module" {
   dynamic "blob_properties" {
     for_each = var.blob_properties == null ? [] : [var.blob_properties]
     content {
-      change_feed_enabled           = blob_properties.value.valuechange_feed_enabled
+      change_feed_enabled           = blob_properties.value.change_feed_enabled
       change_feed_retention_in_days = blob_properties.value.change_feed_retention_in_days
       default_service_version       = blob_properties.value.default_service_version
       last_access_time_enabled      = blob_properties.value.last_access_time_enabled

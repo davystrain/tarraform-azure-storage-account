@@ -134,7 +134,6 @@ variable "blobs" {
   description = "List of storage blobs"
   type = list(object({
     name                   = string
-    storage_account_name   = string
     storage_container_name = string
     type                   = string
   }))
@@ -143,7 +142,6 @@ variable "blobs" {
 variable "queues" {
   type = list(object({
     name                 = string
-    storage_account_name = string
   }))
   default = []
 }

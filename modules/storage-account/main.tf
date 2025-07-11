@@ -31,23 +31,23 @@ resource "azurerm_storage_account" "reusable_module" {
   dynamic "blob_properties" {
     for_each = var.blob_properties == null ? [] : [var.blob_properties]
     content {
-      change_feed_enabled           = var.blob_properties.change_feed_enabled
-      change_feed_retention_in_days = var.blob_properties.change_feed_retention_in_days
-      default_service_version       = var.blob_properties.default_service_version
-      last_access_time_enabled      = var.blob_properties.last_access_time_enabled
-      versioning_enabled            = var.blob_properties.versioning_enabled
+      change_feed_enabled           = blob_properties.value.valuechange_feed_enabled
+      change_feed_retention_in_days = blob_properties.value.change_feed_retention_in_days
+      default_service_version       = blob_properties.value.default_service_version
+      last_access_time_enabled      = blob_properties.value.last_access_time_enabled
+      versioning_enabled            = blob_properties.value.versioning_enabled
 
       container_delete_retention_policy {
-        days = var.blob_properties.container_delete_retention_policy.days
+        days = blob_properties.value.container_delete_retention_policy.days
       }
 
       delete_retention_policy {
-        days                     = var.blob_properties.delete_retention_policy.days
-        permanent_delete_enabled = var.blob_properties.delete_retention_policy.permanent_delete_enabled
+        days                     = blob_properties.value.delete_retention_policy.days
+        permanent_delete_enabled = blob_properties.value.delete_retention_policy.permanent_delete_enabled
       }
 
       restore_policy {
-        days = var.blob_properties.restore_policy.days
+        days = blob_properties.value.restore_policy.days
       }
     }
   }
@@ -56,10 +56,10 @@ resource "azurerm_storage_account" "reusable_module" {
   dynamic "network_rules" {
     for_each = var.network_rules == null ? [] : [var.network_rules]
     content {
-      bypass                     = var.network_rules.bypass
-      default_action             = var.network_rules.default_action
-      ip_rules                   = var.network_rules.ip_rules
-      virtual_network_subnet_ids = var.network_rules.virtual_network_subnet_ids
+      bypass                     = network_rules.value.bypass
+      default_action             = network_rules.value.default_action
+      ip_rules                   = network_rules.value.ip_rules
+      virtual_network_subnet_ids = network_rules.value.virtual_network_subnet_ids
     }
   }
 }

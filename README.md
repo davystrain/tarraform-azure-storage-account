@@ -10,7 +10,7 @@ This repository contains a reusable Terraform module for deploying and managing 
 - [azurerm_storage_queue](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_queue)  
 - [azurerm_storage_table](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_table)
 
-## Example: Calling the module
+## Example: Calling the Standard module
 
 This module is data driven using a yaml data file
 
@@ -53,6 +53,12 @@ module "storage" {
 }
 
 ```
+## Example: Calling the Standard-private-only module
+```hcl
+
+<enter terraform config here>
+
+```
 ## Input Arguments
 
 | Name                                | Optional/Required | Type           | Default Setting | Short Description                                                                                   |
@@ -85,9 +91,65 @@ module "storage" {
 
 > **Note:** Some complex arguments (like `blob_properties`, `network_rules`, etc.) have their own nested required/optional fields. See the [Terraform documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account)
 
-> Network rules private_link_access block for when the storage account is set to **no public access:**
-> 
-> - `endpoint_resource_id` – **(Required)** The ID of the Azure resource granted access to the storage account.
-> - `endpoint_tenant_id` – **(Optional)** Tenant ID of the resource. Defaults to the current tenant.
+**Example: Storage Account definition file**
 
+**Note:** A single storage account can contain multiple containers, each of which can store multiple blobs. Additionally, the same storage account can also host multiple queues and tables.
+```
+storage_accounts:
+  storageaccdavystrainv3:
+    resource_group_name: "terraform"
+    location: "australiaeast"
+    access_tier: "Hot"
+    account_kind: "StorageV2"
+    account_replication_type: "LRS"
+    account_tier: "Standard"
+    allow_nested_items_to_be_public: true
+    local_user_enabled: false
+    cross_tenant_replication_enabled: false
+    default_to_oauth_authentication: true
+    https_traffic_only_enabled: true
+    min_tls_version: "TLS1_2"
+    public_network_access_enabled: true 
+    shared_access_key_enabled: false
+    blob_properties:
+      change_feed_enabled: true 
+      change_feed_retention_in_days: 1 
+      default_service_version: "2023-01-03"
+      last_access_time_enabled: false
+      versioning_enabled: true 
+      container_delete_retention_policy:
+        days: 7
+      delete_retention_policy: 
+        days: 7
+        permanent_delete_enabled: false
+      restore_policy:
+        days: 6 
+    network_rules:
+      bypass: ["None"]
+      default_action: "Allow" 
+      ip_rules: [] 
+      virtual_network_subnet_ids: []
+    tags: {
+      environment: "dev",
+      owner: "teamA"
+      }
+    # Create containers
+    containers:
+      - name: "container1"
+        container_access_type: "container"
+      - name: "container2"
+        container_access_type: "blob"
+    # Create blobs
+    blobs:
+      - name: "blob3"
+        storage_container_name: "container1"
+        type: "Block"
+    # Create queues
+    queues:
+      - name: "queue1"
+    # Create tables
+    tables:
+      - name: "table1"
+        
 
+```yml

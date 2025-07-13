@@ -56,6 +56,7 @@ resource "azurerm_storage_container" "reusable_module" {
   name                  = var.containers[count.index].name
   storage_account_id    = azurerm_storage_account.reusable_module.id
   container_access_type = var.containers[count.index].container_access_type
+  depends_on            = [azurerm_private_endpoint.storage]
 }
 
 resource "azurerm_storage_blob" "reusable_module" {
@@ -64,12 +65,14 @@ resource "azurerm_storage_blob" "reusable_module" {
   storage_account_name   = azurerm_storage_account.reusable_module.name
   storage_container_name = var.blobs[count.index].storage_container_name
   type                   = var.blobs[count.index].type
+  depends_on             = [azurerm_private_endpoint.storage]
 }
 
 resource "azurerm_storage_queue" "reusable_module" {
   count                = length(var.queues)
   name                 = var.queues[count.index].name
   storage_account_name = azurerm_storage_account.reusable_module.name
+  depends_on           = [azurerm_private_endpoint.storage]
 }
 
 # resource "azurerm_storage_table" "reusable_module" {

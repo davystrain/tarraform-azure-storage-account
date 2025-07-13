@@ -112,7 +112,7 @@ resource "azurerm_private_endpoint" "blob" {
   location                      = data.azurerm_resource_group.private_endpoint.location
   resource_group_name           = data.azurerm_resource_group.private_endpoint.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
-  custom_network_interface_name = "pe-${var.name}"
+  custom_network_interface_name = "pe1-${var.name}"
 
   private_dns_zone_group {
     name = "default"
@@ -134,7 +134,7 @@ resource "azurerm_private_endpoint" "queue" {
   location                      = data.azurerm_resource_group.private_endpoint.location
   resource_group_name           = data.azurerm_resource_group.private_endpoint.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
-  custom_network_interface_name = "pe-${var.name}"
+  custom_network_interface_name = "pe2-${var.name}"
 
   private_dns_zone_group {
     name = "default"
@@ -156,7 +156,7 @@ resource "azurerm_private_endpoint" "table" {
   location                      = data.azurerm_resource_group.private_endpoint.location
   resource_group_name           = data.azurerm_resource_group.private_endpoint.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
-  custom_network_interface_name = "pe-${var.name}"
+  custom_network_interface_name = "pe3-${var.name}"
 
   private_dns_zone_group {
     name = "default"

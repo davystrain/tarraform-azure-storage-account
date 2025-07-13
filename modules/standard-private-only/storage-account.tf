@@ -114,9 +114,9 @@ resource "azurerm_private_endpoint" "storage" {
   private_dns_zone_group {
     name = "default"
     private_dns_zone_ids = [
-      data.azurerm_private_dns_zone.blob_azure_net.id,
-      data.azurerm_private_dns_zone.queue_azure_net.id,
-      data.azurerm_private_dns_zone.table_azure_net.id
+      data.azurerm_private_dns_zone.privatelink_blob_azure_net.id,
+      data.azurerm_private_dns_zone.privatelink_queue_azure_net.id,
+      data.azurerm_private_dns_zone.privatelink_table_azure_net.id
     ]
   }
 

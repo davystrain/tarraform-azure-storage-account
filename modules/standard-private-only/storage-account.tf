@@ -1,20 +1,7 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">= 4.35.0"
-    }
-    azapi = {
-      source  = "Azure/azapi"
-      version = "2.5.0"
-    }
-  }
-}
-
 resource "azurerm_storage_account" "reusable_module" {
   name                             = var.name
-  resource_group_name              = var.resource_group_name
-  location                         = var.location
+  resource_group_name              = data.azurerm_resource_group.private_endpoint.name
+  location                         = data.azurerm_resource_group.private_endpoint.location
   access_tier                      = var.access_tier
   account_replication_type         = var.account_replication_type
   account_tier                     = var.account_tier
@@ -115,4 +102,31 @@ resource "azapi_resource" "reusable_module_table" {
   body = {
     properties = var.tables[count.index].properties
   }
+}
+
+resource "azurerm_private_endpoint" "storage" {
+  name                          = "${azurerm_storage_account.reusable_module.name}-pe"
+  location                      = data.azurerm_resource_group.private_endpoint.location
+  resource_group_name           = data.azurerm_resource_group.private_endpoint.name
+  subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
+  custom_network_interface_name = "pe-${var.name}"
+
+  private_dns_zone_group {
+    name = "default"
+    private_dns_zone_ids = [
+      data.azurerm_private_dns_zone.blob_azure_net.id,
+      data.azurerm_private_dns_zone.queue_azure_net.id,
+      data.azurerm_private_dns_zone.table_azure_net.id
+    ]
+  }
+
+  private_service_connection {
+    name                           = "${azurerm_storage_account.reusable_module.name}-psc"
+    private_connection_resource_id = azurerm_storage_account.reusable_module.id
+    subresource_names              = ["blob", "queue", "table"]
+    is_manual_connection           = false
+  }
+  depends_on = [azurerm_storage_account.reusable_module]
+
+  tags = var.tags
 }

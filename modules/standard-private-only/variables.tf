@@ -115,7 +115,7 @@ variable "blob_properties" {
 variable "network_rules" {
   description = "Network rules block."
   type = object({
-    bypass                     = list(string)
+    bypass                     = optional(list(string), ["None"])
     default_action             = optional(string, "Deny")
     ip_rules                   = list(string)
     virtual_network_subnet_ids = list(string)
@@ -170,4 +170,17 @@ variable "tables" {
     properties = optional(map(any), {})
   }))
   default = []
+}
+
+variable "private_endpoint_subnet_name" {
+  description = "The name of the subnet where the private endpoint will be created."
+  type        = string
+}
+variable "virtual_network_name" {
+  description = "The name of the virtual network where the subnet resides"
+  type        = string
+}
+variable "virtual_network_resource_group_name" {
+  description = "The name of the resource group where the virtual network is located."
+  type        = string
 }

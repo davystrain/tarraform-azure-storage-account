@@ -108,6 +108,8 @@ resource "azapi_resource" "reusable_module_table" {
 }
 
 resource "azurerm_private_endpoint" "blob" {
+  count = length(var.containers) > 0 ? 1 : 0
+
   name                          = "${azurerm_storage_account.reusable_module.name}-pe1"
   location                      = data.azurerm_resource_group.private_endpoint.location
   resource_group_name           = data.azurerm_resource_group.private_endpoint.name
@@ -130,6 +132,8 @@ resource "azurerm_private_endpoint" "blob" {
   tags = var.tags
 }
 resource "azurerm_private_endpoint" "queue" {
+  count = length(var.queues) > 0 ? 1 : 0
+
   name                          = "${azurerm_storage_account.reusable_module.name}-pe2"
   location                      = data.azurerm_resource_group.private_endpoint.location
   resource_group_name           = data.azurerm_resource_group.private_endpoint.name
@@ -152,6 +156,8 @@ resource "azurerm_private_endpoint" "queue" {
   tags = var.tags
 }
 resource "azurerm_private_endpoint" "table" {
+  count = length(var.tables) > 0 ? 1 : 0
+  
   name                          = "${azurerm_storage_account.reusable_module.name}-pe3"
   location                      = data.azurerm_resource_group.private_endpoint.location
   resource_group_name           = data.azurerm_resource_group.private_endpoint.name

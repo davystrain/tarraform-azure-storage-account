@@ -108,7 +108,7 @@ resource "azapi_resource" "reusable_module_table" {
 }
 
 resource "azurerm_private_endpoint" "blob" {
-  name                          = "${azurerm_storage_account.reusable_module.name}-pe"
+  name                          = "${azurerm_storage_account.reusable_module.name}-pe1"
   location                      = data.azurerm_resource_group.private_endpoint.location
   resource_group_name           = data.azurerm_resource_group.private_endpoint.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
@@ -130,7 +130,7 @@ resource "azurerm_private_endpoint" "blob" {
   tags = var.tags
 }
 resource "azurerm_private_endpoint" "queue" {
-  name                          = "${azurerm_storage_account.reusable_module.name}-pe"
+  name                          = "${azurerm_storage_account.reusable_module.name}-pe2"
   location                      = data.azurerm_resource_group.private_endpoint.location
   resource_group_name           = data.azurerm_resource_group.private_endpoint.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
@@ -152,7 +152,7 @@ resource "azurerm_private_endpoint" "queue" {
   tags = var.tags
 }
 resource "azurerm_private_endpoint" "table" {
-  name                          = "${azurerm_storage_account.reusable_module.name}-pe"
+  name                          = "${azurerm_storage_account.reusable_module.name}-pe3"
   location                      = data.azurerm_resource_group.private_endpoint.location
   resource_group_name           = data.azurerm_resource_group.private_endpoint.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id

@@ -107,7 +107,7 @@ resource "azapi_resource" "reusable_module_table" {
   }
 }
 
-resource "azurerm_private_endpoint" "storage" {
+resource "azurerm_private_endpoint" "blob" {
   name                          = "${azurerm_storage_account.reusable_module.name}-pe"
   location                      = data.azurerm_resource_group.private_endpoint.location
   resource_group_name           = data.azurerm_resource_group.private_endpoint.name
@@ -116,17 +116,57 @@ resource "azurerm_private_endpoint" "storage" {
 
   private_dns_zone_group {
     name = "default"
-    private_dns_zone_ids = [
-      data.azurerm_private_dns_zone.privatelink_blob_azure_net.id,
-      data.azurerm_private_dns_zone.privatelink_queue_azure_net.id,
-      data.azurerm_private_dns_zone.privatelink_table_azure_net.id
-    ]
+    private_dns_zone_ids = [data.azurerm_private_dns_zone.privatelink_blob_azure_net.id]
   }
 
   private_service_connection {
     name                           = "${azurerm_storage_account.reusable_module.name}-psc"
     private_connection_resource_id = azurerm_storage_account.reusable_module.id
-    subresource_names              = ["blob", "queue", "table"]
+    subresource_names              = ["blob"]
+    is_manual_connection           = false
+  }
+  depends_on = [azurerm_storage_account.reusable_module]
+
+  tags = var.tags
+}
+resource "azurerm_private_endpoint" "queue" {
+  name                          = "${azurerm_storage_account.reusable_module.name}-pe"
+  location                      = data.azurerm_resource_group.private_endpoint.location
+  resource_group_name           = data.azurerm_resource_group.private_endpoint.name
+  subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
+  custom_network_interface_name = "pe-${var.name}"
+
+  private_dns_zone_group {
+    name = "default"
+    private_dns_zone_ids = [data.azurerm_private_dns_zone.privatelink_queue_azure_net.id]
+  }
+
+  private_service_connection {
+    name                           = "${azurerm_storage_account.reusable_module.name}-psc"
+    private_connection_resource_id = azurerm_storage_account.reusable_module.id
+    subresource_names              = ["queue"]
+    is_manual_connection           = false
+  }
+  depends_on = [azurerm_storage_account.reusable_module]
+
+  tags = var.tags
+}
+resource "azurerm_private_endpoint" "table" {
+  name                          = "${azurerm_storage_account.reusable_module.name}-pe"
+  location                      = data.azurerm_resource_group.private_endpoint.location
+  resource_group_name           = data.azurerm_resource_group.private_endpoint.name
+  subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
+  custom_network_interface_name = "pe-${var.name}"
+
+  private_dns_zone_group {
+    name = "default"
+    private_dns_zone_ids = [data.azurerm_private_dns_zone.privatelink_table_azure_net.id]
+  }
+
+  private_service_connection {
+    name                           = "${azurerm_storage_account.reusable_module.name}-psc"
+    private_connection_resource_id = azurerm_storage_account.reusable_module.id
+    subresource_names              = ["table"]
     is_manual_connection           = false
   }
   depends_on = [azurerm_storage_account.reusable_module]

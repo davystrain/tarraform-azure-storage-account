@@ -1,6 +1,6 @@
 resource "azurerm_storage_account" "reusable_module" {
   name                             = var.name
-  resource_group_name              = data.azurerm_resource_group.rg
+  resource_group_name              = data.azurerm_resource_group.rg.name
   location                         = data.azurerm_resource_group.rg.location
   access_tier                      = var.access_tier
   account_replication_type         = var.account_replication_type

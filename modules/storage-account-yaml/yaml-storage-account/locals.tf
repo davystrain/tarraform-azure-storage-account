@@ -25,7 +25,7 @@ locals {
         blobs                            = try(v.blobs, [])
         queues                           = try(v.queues, [])
         tables                           = try(v.tables, [])
-        tags                             = try(v.tags, {})     
+        tags                             = try(v.tags, {})
       }
     ]
   ])

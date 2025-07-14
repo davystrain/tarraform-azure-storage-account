@@ -25,9 +25,9 @@ locals {
         blobs                            = try(v.blobs, [])
         queues                           = try(v.queues, [])
         tables                           = try(v.tables, [])
-        tags                             = merge(try(v.tags, {}), try(v.resource_group_tags, {}))
+        tags                             = merge(try(data.azurerm_resource_group.rg[v.resource_group_name].tags, {}), try(v.tags, {}))      
+      }
     ]
   ])
-
   storage_account_map = { for sa in local.storage_account_list : sa.storage_account_name => sa }
 }

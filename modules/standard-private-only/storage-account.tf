@@ -117,7 +117,7 @@ resource "azurerm_private_endpoint" "blob" {
   custom_network_interface_name = "pe1-${var.name}"
 
   private_dns_zone_group {
-    name = "default"
+    name                 = "default"
     private_dns_zone_ids = [data.azurerm_private_dns_zone.privatelink_blob_azure_net.id]
   }
 
@@ -141,7 +141,7 @@ resource "azurerm_private_endpoint" "queue" {
   custom_network_interface_name = "pe2-${var.name}"
 
   private_dns_zone_group {
-    name = "default"
+    name                 = "default"
     private_dns_zone_ids = [data.azurerm_private_dns_zone.privatelink_queue_azure_net.id]
   }
 
@@ -157,7 +157,7 @@ resource "azurerm_private_endpoint" "queue" {
 }
 resource "azurerm_private_endpoint" "table" {
   count = length(var.tables) > 0 ? 1 : 0
-  
+
   name                          = "${azurerm_storage_account.reusable_module.name}-pe3"
   location                      = data.azurerm_resource_group.private_endpoint.location
   resource_group_name           = data.azurerm_resource_group.private_endpoint.name
@@ -165,7 +165,7 @@ resource "azurerm_private_endpoint" "table" {
   custom_network_interface_name = "pe3-${var.name}"
 
   private_dns_zone_group {
-    name = "default"
+    name                 = "default"
     private_dns_zone_ids = [data.azurerm_private_dns_zone.privatelink_table_azure_net.id]
   }
 

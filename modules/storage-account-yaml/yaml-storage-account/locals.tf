@@ -3,7 +3,7 @@ locals {
 
   storage_account_list = flatten([
     for file in local.storage_account_files : [
-      for k, v in yamldecode(file("${var.yaml_config_path}/${file}")).storage_accounts : v.resource_group_name != null ? {
+      for k, v in yamldecode(file("${var.yaml_config_path}/${file}")).storage_accounts : {
         storage_account_name             = k
         resource_group_name              = v.resource_group_name
         location                         = v.location
@@ -25,7 +25,7 @@ locals {
         blobs                            = try(v.blobs, [])
         queues                           = try(v.queues, [])
         tables                           = try(v.tables, [])
-        tags                             = merge(try(data.azurerm_resource_group.rg[v.resource_group_name].tags, {}), try(v.tags, {}))
+        tags                             = try(v.tags, {})
       }
     ]
   ])

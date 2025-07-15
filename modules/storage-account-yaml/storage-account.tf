@@ -81,13 +81,5 @@ resource "azapi_resource" "reusable_module_table" {
     properties = var.tables[count.index].properties
   }
 }
-resource "azurerm_role_assignment" "container_roles" {
-  for_each = {
-    for idx, container in var.containers :
-    idx => containers if contains(keys(Containers), "role_assignments")
-  }
-  scope        = azurerm_storage_container.reusable_module[each.key].id
-  principal_id = each.value.role_assignments
-}
 
 

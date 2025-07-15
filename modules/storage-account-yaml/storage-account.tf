@@ -14,7 +14,7 @@ resource "azurerm_storage_account" "reusable_module" {
   public_network_access_enabled    = var.public_network_access_enabled
   shared_access_key_enabled        = var.shared_access_key_enabled
   local_user_enabled               = var.local_user_enabled
-  tags                             = merge(data.azurerm_resource_group.rg.tags, var.tags)
+  tags                             = var.tags
   dynamic "blob_properties" {
     for_each = var.blob_properties == null ? [] : [var.blob_properties]
     content {

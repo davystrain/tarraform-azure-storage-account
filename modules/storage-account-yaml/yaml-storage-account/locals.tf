@@ -3,7 +3,7 @@ locals {
 
   storage_account_list = flatten([
     for file in local.storage_account_files : [
-      for k, v in yamldecode(file("${var.yaml_config_path}/${file}")).storage_accounts : {
+      for k, v in yamldecode(file("${var.yaml_config_path}/${file}")).storage_accounts : v.resource_group_name != null ? {
         storage_account_name             = k
         resource_group_name              = v.resource_group_name
         location                         = v.location

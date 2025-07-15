@@ -17,7 +17,8 @@ data "azuread_group" "groups" {
     for ra in var.container_role_assignments : "${ra.principal_type}-${ra.principal_name}" => ra
     if ra.principal_type == "Group"
   }
-  display_name = each.value.principal_name
+
+  object_id = each.value.principal_name
 }
 
 data "azuread_service_principal" "sps" {

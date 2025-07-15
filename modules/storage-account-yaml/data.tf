@@ -18,7 +18,7 @@ data "azuread_group" "groups" {
     if ra.principal_type == "Group"
   }
 
-  display_name = replace(each.value.principal_name, "^/groups/", "")
+  display_name = each.value.principal_name
 }
 
 data "azuread_service_principal" "sps" {

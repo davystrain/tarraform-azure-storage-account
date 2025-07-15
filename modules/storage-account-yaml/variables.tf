@@ -154,3 +154,14 @@ variable "tables" {
   }))
   default = []
 }
+
+variable "role_assignments_map" {
+  description = "List of role assignments for storage account and sub-resources."
+  type = list(object({
+    resource_type        = string
+    resource_name        = string
+    role_definition_name = string
+    principal_id         = string
+  }))
+  default = []
+}

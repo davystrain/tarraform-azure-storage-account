@@ -1,3 +1,77 @@
+locals {
+  role_assignments_flat = flatten([
+    for sa in local.storage_account_list : [
+      # Storage account level
+      for principal_type, roles in try(sa.role_assignments, {}) : [
+        for role, principals in roles : [
+          for principal in principals : {
+            resource_type        = "storage_account"
+            resource_name        = sa.storage_account_name
+            role_definition_name = role
+            principal_id         = principal
+          }
+        ]
+      ]
+    ] ++ [
+      # Containers
+      for container in sa.containers : [
+        for principal_type, roles in try(container.role_assignments, {}) : [
+          for role, principals in roles : [
+            for principal in principals : {
+              resource_type        = "container"
+              resource_name        = container.name
+              role_definition_name = role
+              principal_id         = principal
+            }
+          ]
+        ]
+      ]
+    ] ++ [
+      # Blobs
+      for blob in sa.blobs : [
+        for principal_type, roles in try(blob.role_assignments, {}) : [
+          for role, principals in roles : [
+            for principal in principals : {
+              resource_type        = "blob"
+              resource_name        = blob.name
+              role_definition_name = role
+              principal_id         = principal
+            }
+          ]
+        ]
+      ]
+    ] ++ [
+      # Queues
+      for queue in sa.queues : [
+        for principal_type, roles in try(queue.role_assignments, {}) : [
+          for role, principals in roles : [
+            for principal in principals : {
+              resource_type        = "queue"
+              resource_name        = queue.name
+              role_definition_name = role
+              principal_id         = principal
+            }
+          ]
+        ]
+      ]
+    ] ++ [
+      # Tables
+      for table in sa.tables : [
+        for principal_type, roles in try(table.role_assignments, {}) : [
+          for role, principals in roles : [
+            for principal in principals : {
+              resource_type        = "table"
+              resource_name        = table.name
+              role_definition_name = role
+              principal_id         = principal
+            }
+          ]
+        ]
+      ]
+    ]
+  ])
+  role_assignments_map = { for idx, ra in local.role_assignments_flat : "${ra.resource_type}-${ra.resource_name}-${ra.role_definition_name}-${ra.principal_id}" => ra }
+}
 resource "azurerm_storage_account" "reusable_module" {
   name                             = var.name
   resource_group_name              = data.azurerm_resource_group.rg.name
@@ -80,4 +154,19 @@ resource "azapi_resource" "reusable_module_table" {
   body = {
     properties = var.tables[count.index].properties
   }
+}
+
+resource "azurerm_role_assignment" "reusable_module_sa" {
+  for_each = var.role_assignments_map
+
+  scope = (
+    each.value.resource_type == "storage_account" ? azurerm_storage_account.reusable_module.id :
+    each.value.resource_type == "container"      ? azurerm_storage_container.reusable_module[each.value.resource_name].id :
+    each.value.resource_type == "blob"           ? azurerm_storage_blob.reusable_module[each.value.resource_name].id :
+    each.value.resource_type == "queue"          ? azurerm_storage_queue.reusable_module[each.value.resource_name].id :
+    each.value.resource_type == "table"          ? azapi_resource.reusable_module_table[each.value.resource_name].id :
+    null
+  )
+  role_definition_name = each.value.role_definition_name
+  principal_id         = each.value.principal_id
 }

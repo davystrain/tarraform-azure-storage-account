@@ -29,82 +29,90 @@ locals {
       }
     ]
   ])
+
   storage_account_map = { for sa in local.storage_account_list : sa.storage_account_name => sa }
 
   role_assignments_flat = flatten([
-    for sa in local.storage_account_list : [
-      # Storage account level
-      for principal_type, roles in try(sa.role_assignments, {}) : [
-        for role, principals in roles : [
-          for principal in principals : {
-            resource_type        = "storage_account"
-            resource_name        = sa.storage_account_name
-            role_definition_name = role
-            principal_id         = principal
-          }
-        ]
-      ]
-    ] +
-    # Containers
-    flatten([
-      for container in sa.containers : [
-        for principal_type, roles in try(container.role_assignments, {}) : [
+    for sa in local.storage_account_list : flatten([
+      # Storage account level role assignments
+      flatten([
+        for principal_type, roles in try(sa.role_assignments, {}) : [
           for role, principals in roles : [
             for principal in principals : {
-              resource_type        = "container"
-              resource_name        = container.name
+              resource_type        = "storage_account"
+              resource_name        = sa.storage_account_name
               role_definition_name = role
               principal_id         = principal
             }
           ]
         ]
-      ]
-    ]) +
-    # Blobs
-    flatten([
-      for blob in sa.blobs : [
-        for principal_type, roles in try(blob.role_assignments, {}) : [
-          for role, principals in roles : [
-            for principal in principals : {
-              resource_type        = "blob"
-              resource_name        = blob.name
-              role_definition_name = role
-              principal_id         = principal
-            }
+      ]),
+
+      # Container role assignments
+      flatten([
+        for container in try(sa.containers, []) : [
+          for principal_type, roles in try(container.role_assignments, {}) : [
+            for role, principals in roles : [
+              for principal in principals : {
+                resource_type        = "container"
+                resource_name        = try(container.name, null)
+                role_definition_name = role
+                principal_id         = principal
+              }
+            ]
           ]
         ]
-      ]
-    ]) +
-    # Queues
-    flatten([
-      for queue in sa.queues : [
-        for principal_type, roles in try(queue.role_assignments, {}) : [
-          for role, principals in roles : [
-            for principal in principals : {
-              resource_type        = "queue"
-              resource_name        = queue.name
-              role_definition_name = role
-              principal_id         = principal
-            }
+      ]),
+
+      # Blob role assignments
+      flatten([
+        for blob in try(sa.blobs, []) : [
+          for principal_type, roles in try(blob.role_assignments, {}) : [
+            for role, principals in roles : [
+              for principal in principals : {
+                resource_type        = "blob"
+                resource_name        = try(blob.name, null)
+                role_definition_name = role
+                principal_id         = principal
+              }
+            ]
           ]
         ]
-      ]
-    ]) +
-    # Tables
-    flatten([
-      for table in sa.tables : [
-        for principal_type, roles in try(table.role_assignments, {}) : [
-          for role, principals in roles : [
-            for principal in principals : {
-              resource_type        = "table"
-              resource_name        = table.name
-              role_definition_name = role
-              principal_id         = principal
-            }
+      ]),
+
+      # Queue role assignments
+      flatten([
+        for queue in try(sa.queues, []) : [
+          for principal_type, roles in try(queue.role_assignments, {}) : [
+            for role, principals in roles : [
+              for principal in principals : {
+                resource_type        = "queue"
+                resource_name        = try(queue.name, null)
+                role_definition_name = role
+                principal_id         = principal
+              }
+            ]
           ]
         ]
-      ]
+      ]),
+
+      # Table role assignments
+      flatten([
+        for table in try(sa.tables, []) : [
+          for principal_type, roles in try(table.role_assignments, {}) : [
+            for role, principals in roles : [
+              for principal in principals : {
+                resource_type        = "table"
+                resource_name        = try(table.name, null)
+                role_definition_name = role
+                principal_id         = principal
+              }
+            ]
+          ]
+        ]
+      ])
     ])
   ])
+
   role_assignments_map = { for idx, ra in local.role_assignments_flat : "${ra.resource_type}-${ra.resource_name}-${ra.role_definition_name}-${ra.principal_id}" => ra }
 }

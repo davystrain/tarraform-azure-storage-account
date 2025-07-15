@@ -154,7 +154,3 @@ variable "tables" {
   }))
   default = []
 }
-
-variable "role_assignments_map" {
-  description = "List of role assignments for storage account and sub-resources."
-}

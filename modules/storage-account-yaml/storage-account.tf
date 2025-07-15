@@ -81,20 +81,13 @@ resource "azapi_resource" "reusable_module_table" {
     properties = var.tables[count.index].properties
   }
 }
-
-resource "azurerm_role_assignment" "reusable_module_sa" {
-  for_each = var.role_assignments_map
-
-  scope = (
-    each.value.resource_type == "storage_account" ? azurerm_storage_account.reusable_module.id :
-    each.value.resource_type == "container" ? azurerm_storage_container.reusable_module[each.value.resource_name].id :
-    each.value.resource_type == "blob" ? azurerm_storage_blob.reusable_module[each.value.resource_name].id :
-    each.value.resource_type == "queue" ? azurerm_storage_queue.reusable_module[each.value.resource_name].id :
-    each.value.resource_type == "table" ? azapi_resource.reusable_module_table[each.value.resource_name].id :
-    null
-  )
-  role_definition_name = each.value.role_definition_name
-  principal_id         = each.value.principal_id
+resource "azurerm_role_assignment" "container_roles" {
+  for_each = {
+    for idx, container in var.containers :
+    idx => containers if contains(keys(Containers), "role_assignments")
+  }
+  scope        = azurerm_storage_container.reusable_module[each.key].id
+  principal_id = each.value.role_assignments
 }
 
 

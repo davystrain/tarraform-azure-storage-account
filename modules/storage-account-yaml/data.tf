@@ -6,24 +6,33 @@ data "azurerm_resource_group" "rg" {
 
 data "azuread_user" "users" {
   for_each = {
-    for k, ras in groupby(var.container_role_assignments, [ra -> "${ra.principal_type}-${ra.principal_name}"]) :
-    k => ras[0] if ras[0].principal_type == "User"
+    for ra in distinct([
+      for ra in var.container_role_assignments : 
+      { key = "${ra.principal_type}-${ra.principal_name}", value = ra }
+      if ra.principal_type == "User"
+    ]) : ra.key => ra.value
   }
   user_principal_name = each.value.principal_name
 }
 
 data "azuread_group" "groups" {
   for_each = {
-    for k, ras in groupby(var.container_role_assignments, [ra -> "${ra.principal_type}-${ra.principal_name}"]) :
-    k => ras[0] if ras[0].principal_type == "Group"
+    for ra in distinct([
+      for ra in var.container_role_assignments : 
+      { key = "${ra.principal_type}-${ra.principal_name}", value = ra }
+      if ra.principal_type == "Group"
+    ]) : ra.key => ra.value
   }
   display_name = each.value.principal_name
 }
 
 data "azuread_service_principal" "sps" {
   for_each = {
-    for k, ras in groupby(var.container_role_assignments, [ra -> "${ra.principal_type}-${ra.principal_name}"]) :
-    k => ras[0] if ras[0].principal_type == "ServicePrincipal"
+    for ra in distinct([
+      for ra in var.container_role_assignments : 
+      { key = "${ra.principal_type}-${ra.principal_name}", value = ra }
+      if ra.principal_type == "ServicePrincipal"
+    ]) : ra.key => ra.value
   }
   display_name = each.value.principal_name
 }

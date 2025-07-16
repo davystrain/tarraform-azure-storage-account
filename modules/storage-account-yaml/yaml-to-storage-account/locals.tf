@@ -42,12 +42,12 @@ locals {
         for principal_type, roles in try(container.role_assignments, {}) : [
           for role_definition_name, principal_names in roles : [
             for principal_name in principal_names : {
-              storage_account_name  = sa.storage_account_name
-              resource_group_name   = sa.resource_group_name
-              container_name        = container.name
-              principal_type        = principal_type
-              role_definition_name  = role_definition_name
-              principal_name        = principal_name
+              storage_account_name = sa.storage_account_name
+              resource_group_name  = sa.resource_group_name
+              container_name       = container.name
+              principal_type       = principal_type
+              role_definition_name = role_definition_name
+              principal_name       = principal_name
             }
           ]
         ]

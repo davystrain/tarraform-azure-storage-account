@@ -40,8 +40,8 @@ data "azuread_service_principal" "sps" {
       if ra.principal_type == "ServicePrincipal"
     ]) :
     key => {
-      principal_name = split("-", key)[1]
+      object_id = split("-", key)[1]
     }
   }
-  display_name = each.value.principal_name
+  object_id = each.value.object_id
 }

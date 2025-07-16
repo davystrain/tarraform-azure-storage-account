@@ -34,8 +34,14 @@ data "azuread_group" "groups" {
 
 data "azuread_service_principal" "sps" {
   for_each = {
-    for ra in var.container_role_assignments : "${ra.principal_type}-${ra.principal_name}" => ra
-    if ra.principal_type == "ServicePrincipal"
+    for key in toset([
+      for ra in var.container_role_assignments :
+      "${ra.principal_type}-${ra.principal_name}"
+      if ra.principal_type == "ServicePrincipal"
+    ]) :
+    key => {
+      principal_name = split("-", key)[1]
+    }
   }
   display_name = each.value.principal_name
 }

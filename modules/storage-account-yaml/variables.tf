@@ -89,28 +89,28 @@ variable "tags" {
   default     = {}
 }
 
-variable "blob_properties" {
-  description = "Blob properties block."
-  type = object({
-    change_feed_enabled           = bool
-    change_feed_retention_in_days = number
-    default_service_version       = string
-    last_access_time_enabled      = bool
-    versioning_enabled            = bool
-    container_delete_retention_policy = object({
-      days = number
-    })
-    delete_retention_policy = object({
-      days                     = number
-      permanent_delete_enabled = bool
-    })
-    # Must be used with delete_retention_policy, versioning_enabled, and change_feed_enabled set to true
-    restore_policy = object({
-      days = number
-    })
-  })
-  default = null
-}
+# variable "blob_properties" {
+#   description = "Blob properties block."
+#   type = object({
+#     change_feed_enabled           = bool
+#     change_feed_retention_in_days = number
+#     default_service_version       = string
+#     last_access_time_enabled      = bool
+#     versioning_enabled            = bool
+#     container_delete_retention_policy = object({
+#       days = number
+#     })
+#     delete_retention_policy = object({
+#       days                     = number
+#       permanent_delete_enabled = bool
+#     })
+#     # Must be used with delete_retention_policy, versioning_enabled, and change_feed_enabled set to true
+#     restore_policy = object({
+#       days = number
+#     })
+#   })
+#   default = null
+# }
 
 variable "network_rules" {
   description = "Network rules block."

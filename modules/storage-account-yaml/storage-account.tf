@@ -90,9 +90,9 @@ resource "azurerm_role_assignment" "container_roles" {
 
       role_definition_name = ra.role_definition_name
       principal_id = (
-        ra.principal_type == "User" ? data.azuread_user.users["${ra.principal_type}-${ra.principal_name}"].object_id :
-        ra.principal_type == "Group" ? data.azuread_group.groups["${ra.principal_type}-${ra.principal_name}"].object_id :
-        data.azuread_service_principal.sps["${ra.principal_type}-${ra.principal_name}"].object_id
+        ra.principal_type == "User" ? data.azuread_user.users[ra.principal_name].object_id :
+        ra.principal_type == "Group" ? data.azuread_group.groups[ra.principal_name].object_id :
+        data.azuread_service_principal.sps[ra.principal_name].object_id
       )
     }
   }

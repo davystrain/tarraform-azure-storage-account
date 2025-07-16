@@ -55,7 +55,7 @@ locals {
     ]
   ])
 
-  # ✅ NEW: Map role assignments to each storage account name
+  # Map role assignments to each storage account name
   container_role_assignments_map = {
     for sa in local.storage_account_list :
     sa.storage_account_name => [

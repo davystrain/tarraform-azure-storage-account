@@ -35,9 +35,7 @@ locals {
     sa.storage_account_name => sa
   }
 
-  # -----------------------------------------------
-  # Additional local for container role assignments
-  # -----------------------------------------------
+  # Flatten container-level role assignments across all accounts
   container_role_assignments = flatten([
     for sa in local.storage_account_list : [
       for container in try(sa.containers, []) : [
@@ -56,4 +54,13 @@ locals {
       ]
     ]
   ])
+
+  # ✅ NEW: Map role assignments to each storage account name
+  container_role_assignments_map = {
+    for sa in local.storage_account_list :
+    sa.storage_account_name => [
+      for ra in local.container_role_assignments :
+      ra if ra.storage_account_name == sa.storage_account_name
+    ]
+  }
 }

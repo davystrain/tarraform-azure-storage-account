@@ -12,51 +12,9 @@ This repository contains a reusable Terraform module for deploying and managing 
 
 ## Example: Calling the Standard Storage Module
 
-This module is data driven using a yaml data file
-
-```hcl
-module "yaml-to-storage-account" {
-  source           = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard//yaml-to-storage-account?ref=[git-tag]"
-  yaml_config_path = "../../data/storage-accounts"
-}
-
-module "standard-storage" {
-  source   = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard?ref=[git-tag]"
-  for_each = module.yaml-to-storage-account.storage_account_map
-
-  # Required arguments
-  name                     = each.key
-  resource_group_name      = each.value.resource_group_name
-  location                 = each.value.location
-  access_tier              = each.value.access_tier
-  account_replication_type = each.value.account_replication_type
-  account_tier             = each.value.account_tier
-
-  # Optional arguments
-  account_kind                     = try(each.value.account_kind, null)
-  allow_nested_items_to_be_public  = try(each.value.allow_nested_items_to_be_public, null)
-  cross_tenant_replication_enabled = try(each.value.cross_tenant_replication_enabled, null)
-  default_to_oauth_authentication  = try(each.value.default_to_oauth_authentication, null)
-  https_traffic_only_enabled       = try(each.value.https_traffic_only_enabled, null)
-  min_tls_version                  = try(each.value.min_tls_version, null)
-  public_network_access_enabled    = try(each.value.public_network_access_enabled, null)
-  shared_access_key_enabled        = try(each.value.shared_access_key_enabled, null)
-  local_user_enabled               = try(each.value.local_user_enabled, null)
-
-  blob_properties = try(each.value.blob_properties, null)
-  network_rules   = try(each.value.network_rules, null)
-
-  containers                 = try(each.value.containers, [])
-  container_role_assignments = try(module.yaml-to-storage-account.container_role_assignments_map[each.key], [])
-  blobs                      = try(each.value.blobs, [])
-  queues                     = try(each.value.queues, [])
-  tables                     = try(each.value.tables, [])
-
-  tags = try(each.value.tags, {})
-}
-
-```
-**Example: Storage Account YAML Data File**
+1. **Prepare your YAML files**
+   
+This module is data driven using a yaml data file. Place your Storage Account configuration files (with extensions .yaml or .yml) in a directory. Each file should contain one or multiple Storage Account configuration mappings. Below is an example of a YAML configuration file:
 
 **Note:** A single storage account can contain multiple containers, each of which can store multiple blobs. Additionally, the same storage account can also host multiple queues and tables.
 ```yaml
@@ -137,10 +95,64 @@ storage_accounts:
       - name: "queue1"
     # Create tables
     tables:
-      - name: "table1"
-        
+      - name: "table1"      
+```
+2. **Invoke the Module**
+
+Use the yaml-to-vm module in your Terraform configuration to convert the YAML files into Storage Account configurations. Here is an example of how to use the module:
+
+```hcl
+module "yaml-to-storage-account" {
+  source           = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard//yaml-to-storage-account?ref=[git-tag]"
+  yaml_config_path = "../../data/storage-accounts"
+}
+```
+3. **Use the yaml-to-storage-account output to create new Storage Accounts**
+
+The module will output a map of Storage Account configurations that can be used with the [terraform-azure-storage-account](https://github.com/racwa/terraform-azure-storage-account) module. There are many options available and you may wish to override some of the defaults. Below is an example of how to use the output from the yaml-to-storage-account module to create Storage Accounts:
+```hcl
+module "yaml-to-storage-account" {
+  source           = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard//yaml-to-storage-account?ref=[git-tag]"
+  yaml_config_path = "../../data/storage-accounts"
+}
+
+module "standard-storage" {
+  source   = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard?ref=[git-tag]"
+  for_each = module.yaml-to-storage-account.storage_account_map
+
+  # Required arguments
+  name                     = each.key
+  resource_group_name      = each.value.resource_group_name
+  location                 = each.value.location
+  access_tier              = each.value.access_tier
+  account_replication_type = each.value.account_replication_type
+  account_tier             = each.value.account_tier
+
+  # Optional arguments
+  account_kind                     = try(each.value.account_kind, null)
+  allow_nested_items_to_be_public  = try(each.value.allow_nested_items_to_be_public, null)
+  cross_tenant_replication_enabled = try(each.value.cross_tenant_replication_enabled, null)
+  default_to_oauth_authentication  = try(each.value.default_to_oauth_authentication, null)
+  https_traffic_only_enabled       = try(each.value.https_traffic_only_enabled, null)
+  min_tls_version                  = try(each.value.min_tls_version, null)
+  public_network_access_enabled    = try(each.value.public_network_access_enabled, null)
+  shared_access_key_enabled        = try(each.value.shared_access_key_enabled, null)
+  local_user_enabled               = try(each.value.local_user_enabled, null)
+
+  blob_properties = try(each.value.blob_properties, null)
+  network_rules   = try(each.value.network_rules, null)
+
+  containers                 = try(each.value.containers, [])
+  container_role_assignments = try(module.yaml-to-storage-account.container_role_assignments_map[each.key], [])
+  blobs                      = try(each.value.blobs, [])
+  queues                     = try(each.value.queues, [])
+  tables                     = try(each.value.tables, [])
+
+  tags = try(each.value.tags, {})
+}
 
 ```
+
 ## Example: Calling the standard-storage-private-only Module
 ```hcl
 

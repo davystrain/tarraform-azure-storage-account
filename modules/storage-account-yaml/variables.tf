@@ -130,30 +130,30 @@ variable "containers" {
   }))
   default = []
 }
-variable "blobs" {
-  description = "List of storage blobs"
-  type = list(object({
-    name                   = string
-    storage_container_name = string
-    type                   = string
-  }))
-  default = []
-}
-variable "queues" {
-  type = list(object({
-    name = string
-  }))
-  default = []
-}
+# variable "blobs" {
+#   description = "List of storage blobs"
+#   type = list(object({
+#     name                   = string
+#     storage_container_name = string
+#     type                   = string
+#   }))
+#   default = []
+# }
+# variable "queues" {
+#   type = list(object({
+#     name = string
+#   }))
+#   default = []
+# }
 
-variable "tables" {
-  description = "List of storage tables"
-  type = list(object({
-    name       = string
-    properties = optional(map(any), {})
-  }))
-  default = []
-}
+# variable "tables" {
+#   description = "List of storage tables"
+#   type = list(object({
+#     name       = string
+#     properties = optional(map(any), {})
+#   }))
+#   default = []
+# }
 
 variable "container_role_assignments" {
   description = "List of role assignments for storage containers"

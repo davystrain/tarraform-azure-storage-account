@@ -58,30 +58,30 @@ resource "azurerm_storage_container" "reusable_module" {
   container_access_type = var.containers[count.index].container_access_type
 }
 
-resource "azurerm_storage_blob" "reusable_module" {
-  count                  = length(var.blobs)
-  name                   = var.blobs[count.index].name
-  storage_account_name   = azurerm_storage_account.reusable_module.name
-  storage_container_name = var.blobs[count.index].storage_container_name
-  type                   = var.blobs[count.index].type
-  depends_on = [ azurerm_storage_container.reusable_module ]
-}
+# resource "azurerm_storage_blob" "reusable_module" {
+#   count                  = length(var.blobs)
+#   name                   = var.blobs[count.index].name
+#   storage_account_name   = azurerm_storage_account.reusable_module.name
+#   storage_container_name = var.blobs[count.index].storage_container_name
+#   type                   = var.blobs[count.index].type
+#   depends_on = [ azurerm_storage_container.reusable_module ]
+# }
 
-resource "azurerm_storage_queue" "reusable_module" {
-  count                = length(var.queues)
-  name                 = var.queues[count.index].name
-  storage_account_name = azurerm_storage_account.reusable_module.name
-}
+# resource "azurerm_storage_queue" "reusable_module" {
+#   count                = length(var.queues)
+#   name                 = var.queues[count.index].name
+#   storage_account_name = azurerm_storage_account.reusable_module.name
+# }
 
-resource "azapi_resource" "reusable_module_table" {
-  count     = length(var.tables)
-  type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"
-  name      = var.tables[count.index].name
-  parent_id = "${azurerm_storage_account.reusable_module.id}/tableServices/default"
-  body = {
-    properties = var.tables[count.index].properties
-  }
-}
+# resource "azapi_resource" "reusable_module_table" {
+#   count     = length(var.tables)
+#   type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"
+#   name      = var.tables[count.index].name
+#   parent_id = "${azurerm_storage_account.reusable_module.id}/tableServices/default"
+#   body = {
+#     properties = var.tables[count.index].properties
+#   }
+# }
 
 resource "azurerm_role_assignment" "container_roles" {
   for_each = local.container_role_assignment_map

@@ -6,8 +6,14 @@ data "azurerm_resource_group" "rg" {
 
 data "azuread_user" "users" {
   for_each = {
-    for ra in var.container_role_assignments : "${ra.principal_type}-${ra.principal_name}" => ra
-    if ra.principal_type == "User"
+    for key in toset([
+      for ra in var.container_role_assignments :
+      "${ra.principal_type}-${ra.principal_name}"
+      if ra.principal_type == "User"
+    ]) :
+    key => {
+      principal_name = split("-", key)[1]
+    }
   }
   user_principal_name = each.value.principal_name
 }

@@ -15,15 +15,16 @@ This repository contains a reusable Terraform module for deploying and managing 
 This module is data driven using a yaml data file
 
 ```hcl
-locals {
-  storage_vars = yamldecode(file("${path.module}/data/storage_vars.yaml"))
+module "yaml-to-storage-account" {
+  source           = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard//yaml-to-storage-account?ref=[git-tag]"
+  yaml_config_path = "../../data/storage-accounts"
 }
 
 module "storage" {
-  for_each = local.storage_vars.storage_accounts
-  source   = "git::https://github.com/racwa/terraform-azure-storage-account?ref=[git-tag]"
+  source   = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard?ref=[git-tag]"
+  for_each = module.yaml-to-storage-account.storage_account_map
 
-## Required fields
+  # Required arguments
   name                     = each.key
   resource_group_name      = each.value.resource_group_name
   location                 = each.value.location
@@ -32,24 +33,26 @@ module "storage" {
   account_tier             = each.value.account_tier
 
   # Optional arguments
-  account_kind                     = try(each.value["account_kind"], null)
-  allow_nested_items_to_be_public  = try(each.value["allow_nested_items_to_be_public"], null)
-  cross_tenant_replication_enabled = try(each.value["cross_tenant_replication_enabled"], null)
-  default_to_oauth_authentication  = try(each.value["default_to_oauth_authentication"], null)
-  https_traffic_only_enabled       = try(each.value["https_traffic_only_enabled"], null)
-  min_tls_version                  = try(each.value["min_tls_version"], null)
-  public_network_access_enabled    = try(each.value["public_network_access_enabled"], null)
-  shared_access_key_enabled        = try(each.value["shared_access_key_enabled"], null)
-  local_user_enabled               = try(each.value["local_user_enabled"], null)
+  account_kind                     = try(each.value.account_kind, null)
+  allow_nested_items_to_be_public  = try(each.value.allow_nested_items_to_be_public, null)
+  cross_tenant_replication_enabled = try(each.value.cross_tenant_replication_enabled, null)
+  default_to_oauth_authentication  = try(each.value.default_to_oauth_authentication, null)
+  https_traffic_only_enabled       = try(each.value.https_traffic_only_enabled, null)
+  min_tls_version                  = try(each.value.min_tls_version, null)
+  public_network_access_enabled    = try(each.value.public_network_access_enabled, null)
+  shared_access_key_enabled        = try(each.value.shared_access_key_enabled, null)
+  local_user_enabled               = try(each.value.local_user_enabled, null)
 
-  blob_properties = try(each.value["blob_properties"], null)
-  network_rules   = try(each.value["network_rules"], null)
-  tags            = try(each.value["tags"], {})
+  blob_properties = try(each.value.blob_properties, null)
+  network_rules   = try(each.value.network_rules, null)
 
-  containers = try(each.value["containers"], [])
-  blobs      = try(each.value["blobs"], [])
-  queues     = try(each.value["queues"], [])
-  tables     = try(each.value["tables"], [])
+  containers                 = try(each.value.containers, [])
+  container_role_assignments = try(module.yaml-to-storage-account.container_role_assignments_map[each.key], [])
+  blobs                      = try(each.value.blobs, [])
+  queues                     = try(each.value.queues, [])
+  tables                     = try(each.value.tables, [])
+
+  tags = try(each.value.tags, {})
 }
 
 ```
@@ -149,7 +152,7 @@ storage_accounts:
 ```hcl
 
 module "storage" {
-  source = "git::https://github.com/racwa/terraform-azure-storage-account?ref=[git-tag]"
+  source = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard?ref=[git-tag]"
 
   # Required arguments
   name                     = "example-storage-account"

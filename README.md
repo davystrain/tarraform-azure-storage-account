@@ -10,7 +10,7 @@ This repository contains a reusable Terraform module for deploying and managing 
 - [azurerm_storage_queue](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_queue)  
 - [azurerm_storage_table](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_table)
 
-## Example: Calling the Standard Module
+## Example: Calling the Standard Storage Module
 
 This module is data driven using a yaml data file
 
@@ -20,7 +20,7 @@ module "yaml-to-storage-account" {
   yaml_config_path = "../../data/storage-accounts"
 }
 
-module "storage" {
+module "standard-storage" {
   source   = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard?ref=[git-tag]"
   for_each = module.yaml-to-storage-account.storage_account_map
 
@@ -141,7 +141,7 @@ storage_accounts:
         
 
 ```
-## Example: Calling the Standard-Private-Only Module
+## Example: Calling the standard-storage-private-only Module
 ```hcl
 
 <enter terraform config here>

@@ -90,9 +90,15 @@ resource "azurerm_role_assignment" "container_roles" {
   role_definition_name = each.value.role_definition_name
   principal_id         = each.value.principal_id
   depends_on = [
-    azurerm_storage_account.reusable_module,
-    azurerm_storage_container.reusable_module
+    time_sleep.wait_for_storage_account
   ]
 }
 
 
+resource "time_sleep" "wait_for_storage_account" {
+  depends_on = [
+    azurerm_storage_account.reusable_module,
+    azurerm_storage_container.reusable_module
+  ]
+  create_duration = "30s"
+}

@@ -96,7 +96,7 @@ resource "azurerm_role_assignment" "container_roles" {
 
 resource "null_resource" "delay_blob_ready" {
   provisioner "local-exec" {
-    command = "sleep 20"
+    command = "sleep 30"
   }
 
   depends_on = [

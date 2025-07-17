@@ -100,5 +100,5 @@ resource "time_sleep" "wait_for_storage_account" {
     azurerm_storage_account.reusable_module,
     azurerm_storage_container.reusable_module
   ]
-  create_duration = "120s"
+  create_duration = "300s"
 }

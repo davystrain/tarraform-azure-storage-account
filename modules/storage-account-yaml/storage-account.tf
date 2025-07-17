@@ -89,6 +89,10 @@ resource "azurerm_role_assignment" "container_roles" {
   scope                = each.value.scope
   role_definition_name = each.value.role_definition_name
   principal_id         = each.value.principal_id
+  depends_on = [
+    azurerm_storage_account.reusable_module,
+    azurerm_storage_container.reusable_module
+  ]
 }
 
 

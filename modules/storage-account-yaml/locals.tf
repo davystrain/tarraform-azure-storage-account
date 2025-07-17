@@ -2,7 +2,7 @@ locals {
   container_role_assignment_map = {
     for ra in var.container_role_assignments :
     "${ra.principal_type}-${ra.principal_name}-${ra.role_definition_name}-${ra.container_name}" => {
-      scope                = azurerm_storage_container.reusable_module[ra.container_name].id
+      scope                = azurerm_storage_container.reusable_module[ra.container_name].resource_manager_id
       role_definition_name = ra.role_definition_name
       principal_id = (
         ra.principal_type == "User" ? data.azuread_user.users[ra.principal_name].object_id :

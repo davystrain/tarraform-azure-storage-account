@@ -83,10 +83,41 @@ resource "azurerm_storage_container" "reusable_module" {
 #   }
 # }
 
-resource "azurerm_role_assignment" "container_roles" {
-  for_each = local.container_role_assignment_map
+resource "azurerm_role_assignment" "user_roles" {
+  for_each = {
+    for k, v in local.container_role_assignment_objects :
+    k => v if v.principal_type == "User"
+  }
 
-  scope                = each.value.scope
+  scope                = one([for container in azurerm_storage_container.reusable_module : container.resource_manager_id if container.name == each.value.container_name])
   role_definition_name = each.value.role_definition_name
-  principal_id         = each.value.principal_id
+  principal_id         = data.azuread_user.users[each.value.principal_name].object_id
+
+  depends_on = [azurerm_storage_container.reusable_module]
+}
+
+resource "azurerm_role_assignment" "group_roles" {
+  for_each = {
+    for k, v in local.container_role_assignment_objects :
+    k => v if v.principal_type == "Group"
+  }
+
+  scope                = one([for container in azurerm_storage_container.reusable_module : container.resource_manager_id if container.name == each.value.container_name])
+  role_definition_name = each.value.role_definition_name
+  principal_id         = data.azuread_group.groups[each.value.principal_name].object_id
+
+  depends_on = [azurerm_storage_container.reusable_module]
+}
+
+resource "azurerm_role_assignment" "sp_roles" {
+  for_each = {
+    for k, v in local.container_role_assignment_objects :
+    k => v if v.principal_type == "ServicePrincipal"
+  }
+
+  scope                = one([for container in azurerm_storage_container.reusable_module : container.resource_manager_id if container.name == each.value.container_name])
+  role_definition_name = each.value.role_definition_name
+  principal_id         = data.azuread_service_principal.sps[each.value.principal_name].object_id
+
+  depends_on = [azurerm_storage_container.reusable_module]
 }

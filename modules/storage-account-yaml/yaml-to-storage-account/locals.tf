@@ -1,5 +1,4 @@
 locals {
-  # Step 1: Load YAML files and decode storage account configs
   storage_account_files = fileset(var.yaml_config_path, "*.{yaml,yml}")
 
   storage_account_list = flatten([
@@ -20,8 +19,12 @@ locals {
         public_network_access_enabled    = try(v.public_network_access_enabled, null)
         shared_access_key_enabled        = try(v.shared_access_key_enabled, null)
         local_user_enabled               = try(v.local_user_enabled, null)
+        # blob_properties                  = try(v.blob_properties, null)
         network_rules                    = try(v.network_rules, null)
         containers                       = try(v.containers, [])
+        # blobs                            = try(v.blobs, [])
+        # queues                           = try(v.queues, [])
+        # tables                           = try(v.tables, [])
         tags                             = try(v.tags, {})
       }
     ]
@@ -32,7 +35,7 @@ locals {
     sa.storage_account_name => sa
   }
 
-  # Step 2: Flatten container-level role assignments
+  # Flatten container-level role assignments across all accounts
   container_role_assignments = flatten([
     for sa in local.storage_account_list : [
       for container in try(sa.containers, []) : [
@@ -52,36 +55,12 @@ locals {
     ]
   ])
 
-  # Step 3: Grouped principal names for data lookups
-  user_names = toset([
-    for ra in local.container_role_assignments : ra.principal_name
-    if ra.principal_type == "User"
-  ])
-
-  group_names = toset([
-    for ra in local.container_role_assignments : ra.principal_name
-    if ra.principal_type == "Group"
-  ])
-
-  sp_names = toset([
-    for ra in local.container_role_assignments : ra.principal_name
-    if ra.principal_type == "ServicePrincipal"
-  ])
-
-  # Step 4: Map role assignments with resolved values
-  container_role_assignment_map = {
-    for ra in local.container_role_assignments :
-    "${ra.principal_type}-${ra.principal_name}-${ra.role_definition_name}-${ra.container_name}" => {
-      scope = azurerm_storage_container.reusable_module[ra.container_name].resource_manager_id
-
-      role_definition_name = ra.role_definition_name
-
-      principal_id = (
-        ra.principal_type == "User" ? data.azuread_user.users[ra.principal_name].object_id :
-        ra.principal_type == "Group" ? data.azuread_group.groups[ra.principal_name].object_id :
-        ra.principal_type == "ServicePrincipal" ? data.azuread_service_principal.sps[ra.principal_name].object_id :
-        null
-      )
-    }
+  # Map role assignments to each storage account name
+  container_role_assignments_map = {
+    for sa in local.storage_account_list :
+    sa.storage_account_name => [
+      for ra in local.container_role_assignments :
+      ra if ra.storage_account_name == sa.storage_account_name
+    ]
   }
 }

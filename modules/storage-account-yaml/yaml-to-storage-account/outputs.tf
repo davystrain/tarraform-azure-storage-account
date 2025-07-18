@@ -4,5 +4,5 @@ output "storage_account_map" {
 }
 output "container_role_assignments_map" {
   description = "value of container role assignments map."
-  value = local.container_role_assignments_map
+  value       = local.container_role_assignments_map
 }

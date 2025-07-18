@@ -10,3 +10,8 @@ variable "container_role_assignments" {
   }))
   default = []
 }
+
+variable "storage_container_ids" {
+  description = "Map of container names to their resource IDs"
+  type        = map(string)
+}

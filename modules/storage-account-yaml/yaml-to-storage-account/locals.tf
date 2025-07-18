@@ -20,20 +20,18 @@ locals {
         shared_access_key_enabled        = try(v.shared_access_key_enabled, null)
         local_user_enabled               = try(v.local_user_enabled, null)
         # blob_properties                  = try(v.blob_properties, null)
-        network_rules = try(v.network_rules, null)
-        containers    = try(v.containers, [])
+        network_rules                    = try(v.network_rules, null)
+        containers                       = try(v.containers, [])
         # blobs                            = try(v.blobs, [])
         # queues                           = try(v.queues, [])
         # tables                           = try(v.tables, [])
-        tags = try(v.tags, {})
+        tags                             = try(v.tags, {})
       }
     ]
   ])
 
-  storage_account_map = {
-    for sa in local.storage_account_list :
-    sa.storage_account_name => sa
-  }
+  storage_account_map = { for sa in local.storage_account_list : sa.storage_account_name => sa }
+}
 
 #   # Flatten container-level role assignments across all accounts
 #   container_role_assignments = flatten([

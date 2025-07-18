@@ -20,45 +20,45 @@ locals {
         shared_access_key_enabled        = try(v.shared_access_key_enabled, null)
         local_user_enabled               = try(v.local_user_enabled, null)
         # blob_properties                  = try(v.blob_properties, null)
-        network_rules                    = try(v.network_rules, null)
-        containers                       = try(v.containers, [])
+        network_rules = try(v.network_rules, null)
+        containers    = try(v.containers, [])
         # blobs                            = try(v.blobs, [])
         # queues                           = try(v.queues, [])
         # tables                           = try(v.tables, [])
-        tags                             = try(v.tags, {})
+        tags = try(v.tags, {})
       }
     ]
   ])
 
   storage_account_map = { for sa in local.storage_account_list : sa.storage_account_name => sa }
+
+
+  # Flatten container-level role assignments across all accounts
+  container_role_assignments = flatten([
+    for sa in local.storage_account_list : [
+      for container in try(sa.containers, []) : [
+        for principal_type, roles in try(container.role_assignments, {}) : [
+          for role_definition_name, principal_names in roles : [
+            for principal_name in principal_names : {
+              storage_account_name = sa.storage_account_name
+              resource_group_name  = sa.resource_group_name
+              container_name       = container.name
+              principal_type       = principal_type
+              role_definition_name = role_definition_name
+              principal_name       = principal_name
+            }
+          ]
+        ]
+      ]
+    ]
+  ])
+
+  # Map role assignments to each storage account name
+  container_role_assignments_map = {
+    for sa in local.storage_account_list :
+    sa.storage_account_name => [
+      for ra in local.container_role_assignments :
+      ra if ra.storage_account_name == sa.storage_account_name
+    ]
+  }
 }
-
-#   # Flatten container-level role assignments across all accounts
-#   container_role_assignments = flatten([
-#     for sa in local.storage_account_list : [
-#       for container in try(sa.containers, []) : [
-#         for principal_type, roles in try(container.role_assignments, {}) : [
-#           for role_definition_name, principal_names in roles : [
-#             for principal_name in principal_names : {
-#               storage_account_name = sa.storage_account_name
-#               resource_group_name  = sa.resource_group_name
-#               container_name       = container.name
-#               principal_type       = principal_type
-#               role_definition_name = role_definition_name
-#               principal_name       = principal_name
-#             }
-#           ]
-#         ]
-#       ]
-#     ]
-#   ])
-
-#   # Map role assignments to each storage account name
-#   container_role_assignments_map = {
-#     for sa in local.storage_account_list :
-#     sa.storage_account_name => [
-#       for ra in local.container_role_assignments :
-#       ra if ra.storage_account_name == sa.storage_account_name
-#     ]
-#   }
-# }

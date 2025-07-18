@@ -84,17 +84,15 @@ resource "azurerm_storage_container" "reusable_module" {
 # }
 
 resource "azurerm_role_assignment" "container_roles" {
-  for_each = {
-    for key, val in local.container_role_assignment_map :
-    key => val
-    if contains(keys(azurerm_storage_container.reusable_module), split(key, "-")[3])
-  }
+  for_each = var.container_role_assignments
 
   scope                = each.value.scope
   role_definition_name = each.value.role_definition_name
   principal_id         = each.value.principal_id
-    depends_on = [
+
+  depends_on = [
     azurerm_storage_container.reusable_module
   ]
 }
+
 

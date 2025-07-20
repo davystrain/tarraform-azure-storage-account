@@ -15,8 +15,3 @@ variable "storage_container_ids" {
   description = "Map of container names to their resource IDs"
   type        = map(string)
 }
-
-variable "resource_group_name" {
-  description = "The name of the resource group where the storage account is located."
-  type        = string
-}

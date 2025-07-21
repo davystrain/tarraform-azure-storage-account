@@ -15,72 +15,13 @@ resource "azurerm_storage_account" "reusable_module" {
   shared_access_key_enabled        = var.shared_access_key_enabled
   local_user_enabled               = var.local_user_enabled
   tags                             = merge(data.azurerm_resource_group.rg.tags, var.tags)
-  # dynamic "blob_properties" {
-  #   for_each = var.blob_properties == null ? [] : [var.blob_properties]
-  #   content {
-  #     change_feed_enabled           = blob_properties.value.change_feed_enabled
-  #     change_feed_retention_in_days = blob_properties.value.change_feed_retention_in_days
-  #     default_service_version       = blob_properties.value.default_service_version
-  #     last_access_time_enabled      = blob_properties.value.last_access_time_enabled
-  #     versioning_enabled            = blob_properties.value.versioning_enabled
-
-  #     container_delete_retention_policy {
-  #       days = blob_properties.value.container_delete_retention_policy.days
-  #     }
-
-  #     delete_retention_policy {
-  #       days                     = blob_properties.value.delete_retention_policy.days
-  #       permanent_delete_enabled = blob_properties.value.delete_retention_policy.permanent_delete_enabled
-  #     }
-
-  #     restore_policy {
-  #       days = blob_properties.value.restore_policy.days
-  #     }
-  #   }
-  # }
-
-
-  # dynamic "network_rules" {
-  #   for_each = var.network_rules == null ? [] : [var.network_rules]
-  #   content {
-  #     bypass                     = network_rules.value.bypass
-  #     default_action             = network_rules.value.default_action
-  #     ip_rules                   = network_rules.value.ip_rules
-  #     virtual_network_subnet_ids = network_rules.value.virtual_network_subnet_ids
-  #   }
-  # }
 }
 
 resource "azurerm_storage_container" "reusable_module" {
-  for_each              = { for c in var.containers : c.name => c }
-  name                  = each.value.name
-  storage_account_id    = azurerm_storage_account.reusable_module.id
-  # container_access_type = each.value.container_access_type
+  for_each           = { for c in var.containers : c.name => c }
+  name               = each.value.name
+  storage_account_id = azurerm_storage_account.reusable_module.id
 }
 
-# resource "azurerm_storage_blob" "reusable_module" {
-#   count                  = length(var.blobs)
-#   name                   = var.blobs[count.index].name
-#   storage_account_name   = azurerm_storage_account.reusable_module.name
-#   storage_container_name = var.blobs[count.index].storage_container_name
-#   type                   = var.blobs[count.index].type
-#   depends_on = [ azurerm_storage_container.reusable_module ]
-# }
-
-# resource "azurerm_storage_queue" "reusable_module" {
-#   count                = length(var.queues)
-#   name                 = var.queues[count.index].name
-#   storage_account_name = azurerm_storage_account.reusable_module.name
-# }
-
-# resource "azapi_resource" "reusable_module_table" {
-#   count     = length(var.tables)
-#   type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"
-#   name      = var.tables[count.index].name
-#   parent_id = "${azurerm_storage_account.reusable_module.id}/tableServices/default"
-#   body = {
-#     properties = var.tables[count.index].properties
-#   }
-# }
 
 

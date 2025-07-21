@@ -89,70 +89,23 @@ variable "tags" {
   default     = {}
 }
 
-# variable "blob_properties" {
-#   description = "Blob properties block."
-#   type = object({
-#     change_feed_enabled           = bool
-#     change_feed_retention_in_days = number
-#     default_service_version       = string
-#     last_access_time_enabled      = bool
-#     versioning_enabled            = bool
-#     container_delete_retention_policy = object({
-#       days = number
-#     })
-#     delete_retention_policy = object({
-#       days                     = number
-#       permanent_delete_enabled = bool
-#     })
-#     # Must be used with delete_retention_policy, versioning_enabled, and change_feed_enabled set to true
-#     restore_policy = object({
-#       days = number
-#     })
-#   })
-#   default = null
-# }
-
-# variable "network_rules" {
-#   description = "Network rules block."
-#   type = object({
-#     bypass                     = list(string)
-#     default_action             = string
-#     ip_rules                   = list(string)
-#     virtual_network_subnet_ids = list(string)
-#   })
-#   default = null
-# }
-
 variable "containers" {
   description = "List of storage containers"
   type = list(object({
-    name                  = string
+    name = string
   }))
   default = []
 }
-# variable "blobs" {
-#   description = "List of storage blobs"
-#   type = list(object({
-#     name                   = string
-#     storage_container_name = string
-#     type                   = string
-#   }))
-#   default = []
-# }
-# variable "queues" {
-#   type = list(object({
-#     name = string
-#   }))
-#   default = []
-# }
 
-# variable "tables" {
-#   description = "List of storage tables"
-#   type = list(object({
-#     name       = string
-#     properties = optional(map(any), {})
-#   }))
-#   default = []
-# }
+variable "container_role_assignments" {
+  description = "List of role assignments for containers in this storage account"
+  type = list(object({
+    container_name       = string
+    principal_type       = string
+    role_definition_name = string
+    principal_name       = string
+  }))
+  default = []
+}
 
 

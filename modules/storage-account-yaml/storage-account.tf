@@ -40,15 +40,15 @@ resource "azurerm_storage_account" "reusable_module" {
   # }
 
 
-  dynamic "network_rules" {
-    for_each = var.network_rules == null ? [] : [var.network_rules]
-    content {
-      bypass                     = network_rules.value.bypass
-      default_action             = network_rules.value.default_action
-      ip_rules                   = network_rules.value.ip_rules
-      virtual_network_subnet_ids = network_rules.value.virtual_network_subnet_ids
-    }
-  }
+  # dynamic "network_rules" {
+  #   for_each = var.network_rules == null ? [] : [var.network_rules]
+  #   content {
+  #     bypass                     = network_rules.value.bypass
+  #     default_action             = network_rules.value.default_action
+  #     ip_rules                   = network_rules.value.ip_rules
+  #     virtual_network_subnet_ids = network_rules.value.virtual_network_subnet_ids
+  #   }
+  # }
 }
 
 resource "azurerm_storage_container" "reusable_module" {

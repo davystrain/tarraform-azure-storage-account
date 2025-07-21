@@ -5,26 +5,29 @@ data "azurerm_resource_group" "rg" {
 }
 
 data "azuread_user" "users" {
-  for_each = {
-    for ra in var.container_role_assignments : ra.principal_name => ra
+  for_each = toset([
+    for ra in var.container_role_assignments : ra.principal_name
     if ra.principal_type == "User"
-  }
+  ])
   user_principal_name = each.key
 }
 
+
 data "azuread_group" "groups" {
-  for_each = {
-    for ra in var.container_role_assignments : ra.principal_name => ra
+  for_each = toset([
+    for ra in var.container_role_assignments : ra.principal_name
     if ra.principal_type == "Group"
-  }
+  ])
   display_name = each.key
 }
 
+
 data "azuread_service_principal" "sps" {
-  for_each = {
-    for ra in var.container_role_assignments : ra.principal_name => ra
+  for_each = toset([
+    for ra in var.container_role_assignments : ra.principal_name
     if ra.principal_type == "ServicePrincipal"
-  }
+  ])
   display_name = each.key
 }
+
 

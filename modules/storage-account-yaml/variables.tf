@@ -112,21 +112,21 @@ variable "tags" {
 #   default = null
 # }
 
-variable "network_rules" {
-  description = "Network rules block."
-  type = object({
-    bypass                     = list(string)
-    default_action             = optional(string, "Deny")
-    ip_rules                   = list(string)
-    virtual_network_subnet_ids = list(string)
-  })
-}
+# variable "network_rules" {
+#   description = "Network rules block."
+#   type = object({
+#     bypass                     = list(string)
+#     default_action             = string
+#     ip_rules                   = list(string)
+#     virtual_network_subnet_ids = list(string)
+#   })
+#   default = null
+# }
 
 variable "containers" {
   description = "List of storage containers"
   type = list(object({
     name                  = string
-    container_access_type = optional(string, "private")
   }))
   default = []
 }

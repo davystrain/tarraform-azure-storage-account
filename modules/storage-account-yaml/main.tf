@@ -3,8 +3,8 @@ terraform {
     azurerm = {
       source = "hashicorp/azurerm"
     }
-    azapi = {
-      source = "Azure/azapi"
+    azuread = {
+      source = "hashicorp/azuread"
     }
   }
 }

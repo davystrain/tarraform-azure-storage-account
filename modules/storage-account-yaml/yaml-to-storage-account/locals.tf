@@ -1,11 +1,8 @@
 locals {
-  # Get all yaml/yml files
-  storage_account_files = fileset(var.yaml_config_path, "*.{yaml,yml}")
-
-  # Flatten the yaml into a list of storage account objects
-  storage_account_list = flatten([
-    for file in local.storage_account_files : [
-      for k, v in yamldecode(file("${var.yaml_config_path}/${file}")).storage_accounts : {
+  # Direct map creation from YAML files
+  storage_account_map = merge([
+    for file in fileset(var.yaml_config_path, "*.{yaml,yml}") : {
+      for k, v in yamldecode(file("${var.yaml_config_path}/${file}")).storage_accounts : k => {
         storage_account_name             = k
         resource_group_name              = v.resource_group_name
         location                         = v.location
@@ -24,24 +21,16 @@ locals {
         containers                       = try(v.containers, [])
         tags                             = try(v.tags, {})
       }
-    ]
-  ])
+    }
+  ]...)
 
-  # Map: name => storage account config
-  storage_account_map = {
-    for sa in local.storage_account_list :
-    sa.storage_account_name => sa
-  }
-
-  # Flattened list of container role assignments
-  container_role_assignments = flatten([
-    for sa in local.storage_account_list : [
-      for container in try(sa.containers, []) : [
+  # Direct creation of role assignments map
+  container_role_assignments_map = {
+    for sa_name, sa_config in local.storage_account_map : sa_name => flatten([
+      for container in try(sa_config.containers, []) : [
         for principal_type, roles in try(container.role_assignments, {}) : [
           for role_definition_name, principal_names in roles : [
             for principal_name in principal_names : {
-              storage_account_name = sa.storage_account_name
-              resource_group_name  = sa.resource_group_name
               container_name       = container.name
               principal_type       = principal_type
               role_definition_name = role_definition_name
@@ -50,15 +39,6 @@ locals {
           ]
         ]
       ]
-    ]
-  ])
-
-  # Map: storage_account_name => list of its container role assignments
-  container_role_assignments_map = {
-    for sa in local.storage_account_list :
-    sa.storage_account_name => [
-      for ra in local.container_role_assignments :
-      ra if ra.storage_account_name == sa.storage_account_name
-    ]
+    ])
   }
 }

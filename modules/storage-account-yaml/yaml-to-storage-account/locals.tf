@@ -19,7 +19,7 @@ locals {
         local_user_enabled               = try(v.local_user_enabled, null)
         containers                       = try(v.containers, [])
         tags                             = try(v.tags, {})
-        
+
         # Role assignments included directly
         container_role_assignments = flatten([
           for container in try(v.containers, []) : [

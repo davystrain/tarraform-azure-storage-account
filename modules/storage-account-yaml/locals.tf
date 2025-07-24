@@ -1,5 +1,5 @@
 locals {
-  container_role_assignment_map = {
+  container_role_assignments = {
     for ra in var.container_role_assignments :
     "${ra.principal_type}-${ra.principal_name}-${ra.role_definition_name}-${ra.container_name}" => {
       scope                = azurerm_storage_container.reusable_module[ra.container_name].resource_manager_id

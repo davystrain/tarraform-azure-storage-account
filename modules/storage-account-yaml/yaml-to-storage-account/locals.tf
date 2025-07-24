@@ -20,7 +20,6 @@ locals {
         containers                       = try(v.containers, [])
         tags                             = try(v.tags, {})
 
-        # Role assignments included directly
         container_role_assignments = flatten([
           for container in try(v.containers, []) : [
             for principal_type, roles in try(container.role_assignments, {}) : [

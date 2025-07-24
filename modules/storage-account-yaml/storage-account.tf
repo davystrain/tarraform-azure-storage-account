@@ -24,7 +24,7 @@ resource "azurerm_storage_container" "reusable_module" {
 }
 
 resource "azurerm_role_assignment" "container_roles" {
-  for_each = local.container_role_assignment_map
+  for_each = local.container_role_assignments
 
   scope                = each.value.scope
   role_definition_name = each.value.role_definition_name

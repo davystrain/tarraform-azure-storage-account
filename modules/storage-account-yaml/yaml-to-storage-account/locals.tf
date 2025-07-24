@@ -1,5 +1,4 @@
 locals {
-  # Direct map creation from YAML files
   storage_account_map = merge([
     for file in fileset(var.yaml_config_path, "*.{yaml,yml}") : {
       for k, v in yamldecode(file("${var.yaml_config_path}/${file}")).storage_accounts : k => {
@@ -20,25 +19,23 @@ locals {
         local_user_enabled               = try(v.local_user_enabled, null)
         containers                       = try(v.containers, [])
         tags                             = try(v.tags, {})
+        
+        # Role assignments included directly
+        container_role_assignments = flatten([
+          for container in try(v.containers, []) : [
+            for principal_type, roles in try(container.role_assignments, {}) : [
+              for role_definition_name, principal_names in roles : [
+                for principal_name in principal_names : {
+                  container_name       = container.name
+                  principal_type       = principal_type
+                  role_definition_name = role_definition_name
+                  principal_name       = principal_name
+                }
+              ]
+            ]
+          ]
+        ])
       }
     }
   ]...)
-
-  # Direct creation of role assignments map
-  container_role_assignments_map = {
-    for sa_name, sa_config in local.storage_account_map : sa_name => flatten([
-      for container in try(sa_config.containers, []) : [
-        for principal_type, roles in try(container.role_assignments, {}) : [
-          for role_definition_name, principal_names in roles : [
-            for principal_name in principal_names : {
-              container_name       = container.name
-              principal_type       = principal_type
-              role_definition_name = role_definition_name
-              principal_name       = principal_name
-            }
-          ]
-        ]
-      ]
-    ])
-  }
 }

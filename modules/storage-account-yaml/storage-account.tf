@@ -32,6 +32,24 @@ resource "azurerm_role_assignment" "container_roles" {
   depends_on           = [azurerm_storage_account.reusable_module, azurerm_storage_container.reusable_module]
 }
 
+resource "azurerm_storage_queue" "reusable_module" {
+  for_each             = { for q in var.queues : q.name => q }
+  name                 = each.value.name
+  storage_account_name = azurerm_storage_account.reusable_module.name
+  metadata             = try(each.value.metadata, {})
+}
+
+# UPDATED: Tables using for_each
+resource "azapi_resource" "reusable_module_table" {
+  for_each  = { for t in var.tables : t.name => t }
+  type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"
+  name      = each.value.name
+  parent_id = "${azurerm_storage_account.reusable_module.id}/tableServices/default"
+  body = {
+    properties = try(each.value.properties, {})
+  }
+}
+
 
 
 

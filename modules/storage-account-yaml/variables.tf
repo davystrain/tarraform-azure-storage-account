@@ -104,5 +104,19 @@ variable "container_role_assignments" {
   default = []
 }
 
+variable "queues" {
+  type = list(object({
+    name = string
+  }))
+  default = []
+}
 
+variable "tables" {
+  description = "List of storage tables"
+  type = list(object({
+    name       = string
+    properties = optional(map(any), {})
+  }))
+  default = []
+}
 

@@ -2,32 +2,31 @@ data "azurerm_client_config" "current" {}
 
 data "azurerm_resource_group" "rg" {
   for_each = toset([
-    for sa_name, sa_config in local.storage_account_map : sa_config.resource_group_name
+    for sa_config in local.storage_account_map : sa_config.resource_group_name
   ])
-  name = each.key
+  name = each.value
 }
 
-# Azure AD data sources for all role assignments
 data "azuread_user" "users" {
   for_each = toset([
-    for ra in local.container_role_assignments : ra.principal_name
-    if ra.principal_type == "User"
+    for v in values(local.container_role_assignments) : v.principal_name
+    if v.principal_type == "User"
   ])
-  user_principal_name = each.key
+  user_principal_name = each.value
 }
 
 data "azuread_group" "groups" {
   for_each = toset([
-    for ra in local.container_role_assignments : ra.principal_name
-    if ra.principal_type == "Group"
+    for v in values(local.container_role_assignments) : v.principal_name
+    if v.principal_type == "Group"
   ])
-  display_name = each.key
+  display_name = each.value
 }
 
 data "azuread_service_principal" "sps" {
   for_each = toset([
-    for ra in local.container_role_assignments : ra.principal_name
-    if ra.principal_type == "ServicePrincipal"
+    for v in values(local.container_role_assignments) : v.principal_name
+    if v.principal_type == "ServicePrincipal"
   ])
-  display_name = each.key
+  display_name = each.value
 }

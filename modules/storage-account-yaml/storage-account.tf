@@ -45,15 +45,15 @@ resource "azurerm_storage_queue" "queues" {
       for queue in try(sa_config.queues, []) :
       "${sa_name}-${queue.name}" => {
         storage_account_name = sa_name
-        queue_name          = queue.name
-        metadata           = try(queue.metadata, {})
+        queue_name           = queue.name
+        metadata             = try(queue.metadata, {})
       }
     }
   ]...)
 
   name                 = each.value.queue_name
   storage_account_name = azurerm_storage_account.accounts[each.value.storage_account_name].name
-  metadata            = each.value.metadata
+  metadata             = each.value.metadata
 }
 
 # Storage tables
@@ -63,8 +63,8 @@ resource "azapi_resource" "tables" {
       for table in try(sa_config.tables, []) :
       "${sa_name}-${table.name}" => {
         storage_account_name = sa_name
-        table_name          = table.name
-        properties         = try(table.properties, {})
+        table_name           = table.name
+        properties           = try(table.properties, {})
       }
     }
   ]...)

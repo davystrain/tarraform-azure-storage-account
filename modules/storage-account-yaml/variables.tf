@@ -38,14 +38,3 @@ variable "storage_accounts" {
   }))
   default = {}
 }
-
-# Validation to ensure at least one source is provided
-variable "validate_input" {
-  description = "Internal validation variable"
-  type        = bool
-  default     = true
-  validation {
-    condition     = var.yaml_config_path != null || length(var.storage_accounts) > 0
-    error_message = "Either yaml_config_path or storage_accounts must be provided."
-  }
-}

@@ -1,127 +1,51 @@
-variable "name" {
-  description = "The name of the storage account."
-  type        = string
-}
-
-variable "resource_group_name" {
-  description = "The name of the resource group where the storage account is located."
-  type        = string
-}
-
-variable "location" {
-  description = "The Azure region where the storage account is located."
-  type        = string
-}
-
-variable "access_tier" {
-  description = "The access tier for the storage account."
-  type        = string
-}
-
-variable "account_replication_type" {
-  description = "The replication type for the storage account."
-  type        = string
-}
-
-variable "account_tier" {
-  description = "The performance tier for the storage account."
-  type        = string
-}
-variable "account_kind" {
-  description = "The kind of storage account."
-  type        = string
-  default     = "StorageV2"
-}
-
-variable "allow_nested_items_to_be_public" {
-  description = "Allow nested items to be public."
-  type        = bool
-  default     = false
-}
-
-variable "cross_tenant_replication_enabled" {
-  description = "Enable cross-tenant replication."
-  type        = bool
-  default     = false
-}
-
-variable "default_to_oauth_authentication" {
-  description = "Default to OAuth authentication."
-  type        = bool
-  default     = true
-}
-
-variable "https_traffic_only_enabled" {
-  description = "Enable HTTPS traffic only."
-  type        = bool
-  default     = true
-}
-variable "min_tls_version" {
-  description = "Minimum TLS version."
-  type        = string
-  default     = "TLS1_2"
-}
-
-variable "public_network_access_enabled" {
-  description = "Enable public network access."
-  type        = bool
-  default     = false
-}
-
-variable "shared_access_key_enabled" {
-  description = "Enable shared access key."
-  type        = bool
-  default     = false
-}
-
-variable "local_user_enabled" {
-  description = "Enable local user authentication."
-  type        = bool
-  default     = false
-}
-variable "tags" {
-  description = "A map of tags to assign to the storage account."
-  type        = map(string)
-  default     = {}
-}
-
-variable "containers" {
-  description = "List of storage containers"
-  type = list(object({
-    name = string
-  }))
-  default = []
-}
-
-variable "container_role_assignments" {
-  description = "List of role assignments for containers"
-  type = list(object({
-    container_name       = string
-    principal_type       = string
-    role_definition_name = string
-    principal_name       = string
-  }))
-  default = []
-}
-
-variable "queues" {
-  type = list(object({
-    name = string
-  }))
-  default = []
-}
-
-variable "tables" {
-  description = "List of storage tables"
-  type = list(object({
-    name       = string
-    properties = optional(map(any), {})
-  }))
-  default = []
-}
-
 variable "yaml_config_path" {
-  description = "Path to the YAML configuration file."
+  description = "Path to the YAML configuration files"
   type        = string
+  default     = null
 }
 
+variable "storage_accounts" {
+  description = "Map of storage account configurations"
+  type = map(object({
+    resource_group_name      = string
+    location                 = string
+    access_tier              = string
+    account_replication_type = string
+    account_tier             = string
+    account_kind                     = optional(string, "StorageV2")
+    allow_nested_items_to_be_public  = optional(bool, false)
+    cross_tenant_replication_enabled = optional(bool, false)
+    default_to_oauth_authentication  = optional(bool, true)
+    https_traffic_only_enabled       = optional(bool, true)
+    min_tls_version                  = optional(string, "TLS1_2")
+    public_network_access_enabled    = optional(bool, false)
+    shared_access_key_enabled        = optional(bool, false)
+    local_user_enabled               = optional(bool, false)
+    containers = optional(list(object({
+      name                  = string
+      container_access_type = optional(string, "private")
+      role_assignments     = optional(map(map(list(string))), {})
+    })), [])
+    queues = optional(list(object({
+      name     = string
+      metadata = optional(map(string), {})
+    })), [])
+    tables = optional(list(object({
+      name       = string
+      properties = optional(map(any), {})
+    })), [])
+    tags = optional(map(string), {})
+  }))
+  default = {}
+}
+
+# Validation to ensure at least one source is provided
+variable "validate_input" {
+  description = "Internal validation variable"
+  type        = bool
+  default     = true
+  validation {
+    condition     = var.yaml_config_path != null || length(var.storage_accounts) > 0
+    error_message = "Either yaml_config_path or storage_accounts must be provided."
+  }
+}

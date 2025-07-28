@@ -1,3 +1,8 @@
+variable "yaml_config_path" {
+  description = "Path to the YAML configuration file."
+  type        = string
+}
+
 variable "name" {
   description = "The name of the storage account."
   type        = string
@@ -119,4 +124,5 @@ variable "tables" {
   }))
   default = []
 }
+
 

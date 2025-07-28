@@ -22,7 +22,7 @@ locals {
         queues                           = try(v.queues, [])
         tables                           = try(v.tables, [])
         tags                             = try(v.tags, {})
-        
+
         # Flatten role assignments during YAML parsing
         container_role_assignments = flatten([
           for container in try(v.containers, []) : [

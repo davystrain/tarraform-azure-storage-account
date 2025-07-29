@@ -1,4 +1,4 @@
-output "storage_account_id" {
-  description = "The ID of the storage account."
-  value       = azurerm_storage_account.sa.id
+output "storage_account_ids" {
+  description = "Map of storage account names to their IDs."
+  value       = { for name, sa in azurerm_storage_account.sa : name => sa.id }
 }

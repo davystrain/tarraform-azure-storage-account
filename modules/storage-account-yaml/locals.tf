@@ -29,18 +29,18 @@ locals {
       )
     }
   }
-  
+
   # Extract unique principal names for data source lookups
   user_principals = toset([
     for ra in local.flattened_container_role_assignments : ra.principal_name
     if ra.principal_type == "User"
   ])
-  
+
   group_principals = toset([
     for ra in local.flattened_container_role_assignments : ra.principal_name
     if ra.principal_type == "Group"
   ])
-  
+
   sp_principals = toset([
     for ra in local.flattened_container_role_assignments : ra.principal_name
     if ra.principal_type == "ServicePrincipal"

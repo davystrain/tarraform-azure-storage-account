@@ -86,23 +86,25 @@ variable "tags" {
 }
 
 variable "containers" {
-  description = "List of storage containers"
+  description = "List of storage containers with optional role assignments"
   type = list(object({
-    name = string
+    name                  = string
+    container_access_type = optional(string, "private")
+    role_assignments = optional(map(map(list(string))), {})
   }))
   default = []
 }
 
-variable "container_role_assignments" {
-  description = "List of role assignments for containers"
-  type = list(object({
-    container_name       = string
-    principal_type       = string
-    role_definition_name = string
-    principal_name       = string
-  }))
-  default = []
-}
+# variable "container_role_assignments" {
+#   description = "List of role assignments for containers"
+#   type = list(object({
+#     container_name       = string
+#     principal_type       = string
+#     role_definition_name = string
+#     principal_name       = string
+#   }))
+#   default = []
+# }
 
 variable "queues" {
   type = list(object({

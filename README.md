@@ -111,16 +111,11 @@ module "yaml-to-storage-account" {
 
 The module will output a map of Storage Account configurations that can be used with the [terraform-azure-storage-account](https://github.com/racwa/terraform-azure-storage-account) module. There are many options available and you may wish to override some of the defaults. Below is an example of how to use the output from the yaml-to-storage-account module to create Storage Accounts:
 ```hcl
-module "yaml-to-storage-account" {
-  source           = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard//yaml-to-storage-account?ref=[git-tag]"
-  yaml_config_path = "../../data/storage-accounts"
-}
-
-module "standard-storage" {
+module "storage" {
   source   = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard?ref=[git-tag]"
-  for_each = module.yaml-to-storage-account.storage_account_map
+  for_each = local.storage_account_map
 
-  # Required arguments
+  # Required variables
   name                     = each.key
   resource_group_name      = each.value.resource_group_name
   location                 = each.value.location
@@ -128,29 +123,23 @@ module "standard-storage" {
   account_replication_type = each.value.account_replication_type
   account_tier             = each.value.account_tier
 
-  # Optional arguments
-  account_kind                     = try(each.value.account_kind, null)
-  allow_nested_items_to_be_public  = try(each.value.allow_nested_items_to_be_public, null)
-  cross_tenant_replication_enabled = try(each.value.cross_tenant_replication_enabled, null)
-  default_to_oauth_authentication  = try(each.value.default_to_oauth_authentication, null)
-  https_traffic_only_enabled       = try(each.value.https_traffic_only_enabled, null)
-  min_tls_version                  = try(each.value.min_tls_version, null)
-  public_network_access_enabled    = try(each.value.public_network_access_enabled, null)
-  shared_access_key_enabled        = try(each.value.shared_access_key_enabled, null)
-  local_user_enabled               = try(each.value.local_user_enabled, null)
+  # Optional variables with defaults from your variable definitions
+  account_kind                     = try(each.value.account_kind, "StorageV2")
+  allow_nested_items_to_be_public  = try(each.value.allow_nested_items_to_be_public, false)
+  cross_tenant_replication_enabled = try(each.value.cross_tenant_replication_enabled, false)
+  default_to_oauth_authentication  = try(each.value.default_to_oauth_authentication, true)
+  https_traffic_only_enabled       = try(each.value.https_traffic_only_enabled, true)
+  min_tls_version                  = try(each.value.min_tls_version, "TLS1_2")
+  public_network_access_enabled    = try(each.value.public_network_access_enabled, false)
+  shared_access_key_enabled        = try(each.value.shared_access_key_enabled, false)
+  local_user_enabled               = try(each.value.local_user_enabled, false)
 
-  blob_properties = try(each.value.blob_properties, null)
-  network_rules   = try(each.value.network_rules, null)
-
-  containers                 = try(each.value.containers, [])
-  container_role_assignments = try(module.yaml-to-storage-account.container_role_assignments_map[each.key], [])
-  blobs                      = try(each.value.blobs, [])
-  queues                     = try(each.value.queues, [])
-  tables                     = try(each.value.tables, [])
-
-  tags = try(each.value.tags, {})
+  # Complex types
+  containers = try(each.value.containers, [])
+  queues     = try(each.value.queues, [])
+  tables     = try(each.value.tables, [])
+  tags       = try(each.value.tags, {})
 }
-
 ```
 
 ## Example: Calling the standard-storage-private-only Module

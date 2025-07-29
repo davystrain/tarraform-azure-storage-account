@@ -95,17 +95,6 @@ variable "containers" {
   default = []
 }
 
-# variable "container_role_assignments" {
-#   description = "List of role assignments for containers"
-#   type = list(object({
-#     container_name       = string
-#     principal_type       = string
-#     role_definition_name = string
-#     principal_name       = string
-#   }))
-#   default = []
-# }
-
 variable "queues" {
   type = list(object({
     name = string

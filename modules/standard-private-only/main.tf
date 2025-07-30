@@ -1,15 +1,13 @@
 terraform {
-  required_version = ">= 1.12.0"
-
   required_providers {
     azurerm = {
-      source                = "hashicorp/azurerm"
-      configuration_aliases = [azurerm, azurerm.pe-dns-infra]
+      source = "hashicorp/azurerm"
+    }
+    azuread = {
+      source = "hashicorp/azuread"
     }
     azapi = {
-      source  = "Azure/azapi"
-      version = "2.5.0"
+      source = "Azure/azapi"
     }
   }
 }
-

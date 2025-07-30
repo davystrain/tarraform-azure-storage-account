@@ -78,7 +78,7 @@ resource "azurerm_private_endpoint" "queue" {
     subresource_names              = ["queue"]
     is_manual_connection           = false
   }
-  depends_on = [azurerm_storage_account.sa]
+  depends_on = [azurerm_storage_account.sa, azurerm_storage_queue.sq]
 }
 
 resource "azurerm_private_endpoint" "table" {
@@ -101,5 +101,5 @@ resource "azurerm_private_endpoint" "table" {
     subresource_names              = ["table"]
     is_manual_connection           = false
   }
-  depends_on = [azurerm_storage_account.sa]
+  depends_on = [azurerm_storage_account.sa, azurerm_api_resource.st]
 }

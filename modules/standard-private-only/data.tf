@@ -18,12 +18,6 @@ data "azuread_service_principal" "sps" {
   display_name = each.value
 }
 
-data "azurerm_private_dns_zone" "privatelink_blob_azure_net" {
-  provider            = azurerm.pe-dns-infra
-  name                = "privatelink.blob.core.windows.net"
-  resource_group_name = "terraform"
-}
-
 data "azurerm_private_dns_zone" "privatelink_queue_azure_net" {
   provider            = azurerm.pe-dns-infra
   name                = "privatelink.queue.core.windows.net"

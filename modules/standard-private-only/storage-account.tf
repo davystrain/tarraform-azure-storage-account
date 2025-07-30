@@ -45,7 +45,7 @@ resource "azurerm_storage_queue" "sq" {
   for_each             = { for q in var.queues : q.name => q }
   name                 = each.value.name
   storage_account_name = azurerm_storage_account.sa.name
-  depends_on           = [azurerm_storage_account.sa, azurerm_private_endpoint.queue]
+  depends_on           = [azurerm_private_endpoint.queue]
 }
 
 # UPDATED: Tables using for_each
@@ -57,7 +57,7 @@ resource "azapi_resource" "st" {
   body = {
     properties = try(each.value.properties, {})
   }
-  depends_on = [azurerm_storage_account.sa, azurerm_private_endpoint.table]
+  depends_on = [azurerm_private_endpoint.table]
 }
 
 resource "azurerm_private_endpoint" "queue" {

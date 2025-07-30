@@ -41,11 +41,22 @@ resource "azurerm_role_assignment" "container_roles" {
   depends_on           = [azurerm_storage_account.sa, azurerm_storage_container.sc]
 }
 
-resource "azurerm_storage_queue" "sq" {
-  for_each             = { for q in var.queues : q.name => q }
-  name                 = each.value.name
-  storage_account_name = azurerm_storage_account.sa.name
-  depends_on           = [azurerm_private_endpoint.queue]
+# resource "azurerm_storage_queue" "sq" {
+#   for_each             = { for q in var.queues : q.name => q }
+#   name                 = each.value.name
+#   storage_account_name = azurerm_storage_account.sa.name
+#   depends_on           = [azurerm_private_endpoint.queue]
+# }
+
+resource "azapi_resource" "queue" {
+  for_each  = { for q in var.queues : q.name => q }
+  type      = "Microsoft.Storage/storageAccounts/queueServices/queues@2022-09-01"
+  name      = each.value.name
+  parent_id = "${azurerm_storage_account.sa.id}/queueServices/default"
+  body = {
+    properties = try(each.value.properties, {})
+  }
+  depends_on = [azurerm_private_endpoint.queue]
 }
 
 # UPDATED: Tables using for_each

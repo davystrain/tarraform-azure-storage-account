@@ -1,6 +1,6 @@
 output "storage_account_id" {
   description = "The ID of the storage account."
-  value       = azurerm_storage_account.reusable_module.id
+  value       = azurerm_storage_account.sa.id
 }
 
 output "storage_account_name" {

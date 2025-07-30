@@ -94,7 +94,12 @@ variable "network_rules" {
     ip_rules                   = list(string)
     virtual_network_subnet_ids = list(string)
   })
-  default = {}
+  default = {
+    bypass                     = ["AzureServices"]
+    default_action             = "Deny"
+    ip_rules                   = []
+    virtual_network_subnet_ids = []
+  }
 }
 
 variable "containers" {
@@ -123,4 +128,15 @@ variable "tables" {
   default = []
 }
 
-
+variable "private_endpoint_subnet_name" {
+  description = "The name of the subnet where the private endpoint will be created."
+  type        = string
+}
+variable "virtual_network_name" {
+  description = "The name of the virtual network where the subnet resides"
+  type        = string
+}
+variable "virtual_network_resource_group_name" {
+  description = "The name of the resource group where the virtual network is located."
+  type        = string
+}

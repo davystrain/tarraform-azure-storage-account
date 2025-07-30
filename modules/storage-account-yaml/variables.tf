@@ -79,10 +79,27 @@ variable "local_user_enabled" {
   type        = bool
   default     = false
 }
+
 variable "tags" {
   description = "A map of tags to assign to the storage account."
   type        = map(string)
   default     = {}
+}
+
+variable "network_rules" {
+  description = "Network rules block."
+  type = object({
+    bypass                     = list(string)
+    default_action             = string
+    ip_rules                   = list(string)
+    virtual_network_subnet_ids = list(string)
+  })
+  default = {
+    bypass                     = ["AzureServices"]
+    default_action             = "Allow"
+    ip_rules                   = []
+    virtual_network_subnet_ids = []
+  }
 }
 
 variable "containers" {
@@ -90,7 +107,7 @@ variable "containers" {
   type = list(object({
     name                  = string
     container_access_type = optional(string, "private")
-    role_assignments = optional(map(map(list(string))), {})
+    role_assignments      = optional(map(map(list(string))), {})
   }))
   default = []
 }

@@ -75,7 +75,7 @@ resource "azurerm_private_endpoint" "queue" {
   private_service_connection {
     name                           = "${azurerm_storage_account.sa.name}-psc"
     private_connection_resource_id = azurerm_storage_account.sa.id
-    subresource_names              = ["Queue"]
+    subresource_names              = ["queue"]
     is_manual_connection           = false
   }
   depends_on = [azurerm_storage_account.sa, azurerm_storage_queue.sq]
@@ -98,7 +98,7 @@ resource "azurerm_private_endpoint" "table" {
   private_service_connection {
     name                           = "${azurerm_storage_account.sa.name}-psc"
     private_connection_resource_id = azurerm_storage_account.sa.id
-    subresource_names              = ["Table"]
+    subresource_names              = ["table"]
     is_manual_connection           = false
   }
   depends_on = [azurerm_storage_account.sa, azapi_resource.st]

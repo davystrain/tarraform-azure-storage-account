@@ -82,7 +82,7 @@ resource "azurerm_private_endpoint" "queue" {
 }
 
 resource "azurerm_private_endpoint" "table" {
-  for_each  = { for t in var.tables : t.name => t }
+  for_each = { for t in var.tables : t.name => t }
 
   name                          = "${azurerm_storage_account.sa.name}-pe3"
   location                      = data.azurerm_resource_group.rg.location

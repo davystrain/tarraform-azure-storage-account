@@ -58,33 +58,8 @@ resource "azapi_resource" "st" {
   }
 }
 
-
-resource "azurerm_private_endpoint" "blob" {
-  count = length(var.containers) > 0 ? 1 : 0
-
-  name                          = "${azurerm_storage_account.sa.name}-pe1"
-  location                      = data.azurerm_resource_group.rg.location
-  resource_group_name           = data.azurerm_resource_group.rg.name
-  subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
-  custom_network_interface_name = "pe1-${var.name}"
-
-  private_dns_zone_group {
-    name                 = "default"
-    private_dns_zone_ids = [data.azurerm_private_dns_zone.privatelink_blob_azure_net.id]
-  }
-
-  private_service_connection {
-    name                           = "${azurerm_storage_account.sa.name}-psc"
-    private_connection_resource_id = azurerm_storage_account.sa.id
-    subresource_names              = ["blob"]
-    is_manual_connection           = false
-  }
-  depends_on = [azurerm_storage_account.sa]
-
-  tags = var.tags
-}
 resource "azurerm_private_endpoint" "queue" {
-  count = length(var.queues) > 0 ? 1 : 0
+  for_each = { for q in var.queues : q.name => q }
 
   name                          = "${azurerm_storage_account.sa.name}-pe2"
   location                      = data.azurerm_resource_group.rg.location
@@ -104,11 +79,10 @@ resource "azurerm_private_endpoint" "queue" {
     is_manual_connection           = false
   }
   depends_on = [azurerm_storage_account.sa]
-
-  tags = var.tags
 }
+
 resource "azurerm_private_endpoint" "table" {
-  count = length(var.tables) > 0 ? 1 : 0
+  for_each  = { for t in var.tables : t.name => t }
 
   name                          = "${azurerm_storage_account.sa.name}-pe3"
   location                      = data.azurerm_resource_group.rg.location
@@ -128,6 +102,4 @@ resource "azurerm_private_endpoint" "table" {
     is_manual_connection           = false
   }
   depends_on = [azurerm_storage_account.sa]
-
-  tags = var.tags
 }

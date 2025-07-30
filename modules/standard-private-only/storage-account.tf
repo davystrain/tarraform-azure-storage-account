@@ -46,7 +46,6 @@ resource "azurerm_storage_queue" "sq" {
   name                 = each.value.name
   storage_account_name = azurerm_storage_account.sa.name
   depends_on           = [azurerm_storage_account.sa, azurerm_private_endpoint.queue]
-
 }
 
 # UPDATED: Tables using for_each

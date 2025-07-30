@@ -11,25 +11,21 @@ variable "resource_group_name" {
 variable "location" {
   description = "The Azure region where the storage account is located."
   type        = string
-  default     = "australiaeast"
 }
 
 variable "access_tier" {
   description = "The access tier for the storage account."
   type        = string
-  default     = "Hot"
 }
 
 variable "account_replication_type" {
   description = "The replication type for the storage account."
   type        = string
-  default     = "LRS"
 }
 
 variable "account_tier" {
   description = "The performance tier for the storage account."
   type        = string
-  default     = "Standard"
 }
 variable "account_kind" {
   description = "The kind of storage account."
@@ -83,85 +79,40 @@ variable "local_user_enabled" {
   type        = bool
   default     = false
 }
+
 variable "tags" {
   description = "A map of tags to assign to the storage account."
   type        = map(string)
   default     = {}
 }
 
-variable "blob_properties" {
-  description = "Blob properties block."
-  type = object({
-    change_feed_enabled           = bool
-    change_feed_retention_in_days = number
-    default_service_version       = string
-    last_access_time_enabled      = bool
-    versioning_enabled            = bool
-    container_delete_retention_policy = object({
-      days = number
-    })
-    delete_retention_policy = object({
-      days                     = number
-      permanent_delete_enabled = bool
-    })
-    # Must be used with delete_retention_policy, versioning_enabled, and change_feed_enabled set to true
-    restore_policy = object({
-      days = number
-    })
-  })
-  default = null
-}
-
 variable "network_rules" {
   description = "Network rules block."
   type = object({
-    bypass                     = optional(list(string), ["None"])
-    default_action             = optional(string, "Deny")
+    bypass                     = list(string)
+    default_action             = string
     ip_rules                   = list(string)
     virtual_network_subnet_ids = list(string)
   })
+  default = {}
 }
 
 variable "containers" {
-  description = "List of storage containers"
+  description = "List of storage containers with optional role assignments"
   type = list(object({
     name                  = string
     container_access_type = optional(string, "private")
+    role_assignments      = optional(map(map(list(string))), {})
   }))
   default = []
 }
-variable "blobs" {
-  description = "List of storage blobs"
-  type = list(object({
-    name                   = string
-    storage_container_name = string
-    type                   = string
-  }))
-  default = []
-}
+
 variable "queues" {
   type = list(object({
     name = string
   }))
   default = []
 }
-
-# variable "tables" {
-#   description = "List of storage tables"
-#   type = list(object({
-#     name                 = string
-#     storage_account_name = string
-#     acl = optional(list(object({
-#       id = string
-#       access_policy = optional(object({
-#         expiry      = string
-#         permissions = string
-#         start       = string
-#       }))
-#     })))
-#   }))
-#   default = []
-# }
 
 variable "tables" {
   description = "List of storage tables"
@@ -172,15 +123,4 @@ variable "tables" {
   default = []
 }
 
-variable "private_endpoint_subnet_name" {
-  description = "The name of the subnet where the private endpoint will be created."
-  type        = string
-}
-variable "virtual_network_name" {
-  description = "The name of the virtual network where the subnet resides"
-  type        = string
-}
-variable "virtual_network_resource_group_name" {
-  description = "The name of the resource group where the virtual network is located."
-  type        = string
-}
+

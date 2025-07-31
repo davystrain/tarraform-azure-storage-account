@@ -1,7 +1,7 @@
 locals {
   storage_account_map = merge([
     for file in fileset(var.yaml_config_path, "*.{yaml,yml}") : {
-      for k, v in yamldecode(file("${var.yaml_config_path}/${file}")).storage_accounts : k => {
+      for k, v in yamldecode(file("${var.yaml_config_path}/${file}")) : k => {
         storage_account_name             = k
         resource_group_name              = v.resource_group_name
         location                         = v.location

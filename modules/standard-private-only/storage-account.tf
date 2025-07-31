@@ -80,6 +80,7 @@ resource "azurerm_private_endpoint" "blob" {
   }
   depends_on = [azurerm_storage_account.sa]
 }
+
 resource "azurerm_private_endpoint" "queue" {
   name                          = "${azurerm_storage_account.sa.name}-pe2"
   location                      = data.azurerm_resource_group.rg.location

@@ -36,10 +36,11 @@ resource "azurerm_storage_queue" "sq" {
   for_each             = { for q in var.queues : q.name => q }
   name                 = each.value.name
   storage_account_name = azurerm_storage_account.sa.name
+  metadata             = try(each.value.metadata, {})
 }
 
 # UPDATED: Tables using for_each
-resource "azapi_resource" "st" {
+resource "azapi_resource" "reusable_module_table" {
   for_each  = { for t in var.tables : t.name => t }
   type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"
   name      = each.value.name
@@ -48,3 +49,7 @@ resource "azapi_resource" "st" {
     properties = try(each.value.properties, {})
   }
 }
+
+
+
+

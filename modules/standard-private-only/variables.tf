@@ -11,21 +11,25 @@ variable "resource_group_name" {
 variable "location" {
   description = "The Azure region where the storage account is located."
   type        = string
+  default     = "australiaeast"
 }
 
 variable "access_tier" {
   description = "The access tier for the storage account."
   type        = string
+  default     = "Hot"
 }
 
 variable "account_replication_type" {
   description = "The replication type for the storage account."
   type        = string
+  default     = "LRS"
 }
 
 variable "account_tier" {
   description = "The performance tier for the storage account."
   type        = string
+  default     = "Standard"
 }
 variable "account_kind" {
   description = "The kind of storage account."
@@ -79,7 +83,6 @@ variable "local_user_enabled" {
   type        = bool
   default     = false
 }
-
 variable "tags" {
   description = "A map of tags to assign to the storage account."
   type        = map(string)
@@ -89,25 +92,29 @@ variable "tags" {
 variable "network_rules" {
   description = "Network rules block."
   type = object({
-    bypass                     = list(string)
-    default_action             = string
+    bypass                     = optional(list(string), ["None"])
+    default_action             = optional(string, "Deny")
     ip_rules                   = list(string)
     virtual_network_subnet_ids = list(string)
   })
-  default = {
-    bypass                     = ["AzureServices"]
-    default_action             = "Deny"
-    ip_rules                   = []
-    virtual_network_subnet_ids = []
-  }
 }
 
 variable "containers" {
-  description = "List of storage containers with optional role assignments"
+  description = "List of storage containers"
   type = list(object({
     name                  = string
     container_access_type = optional(string, "private")
-    role_assignments      = optional(map(map(list(string))), {})
+  }))
+  default = []
+}
+
+variable "container_role_assignments" {
+  description = "List of role assignments for containers"
+  type = list(object({
+    container_name       = string
+    principal_type       = string
+    role_definition_name = string
+    principal_name       = string
   }))
   default = []
 }

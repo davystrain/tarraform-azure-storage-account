@@ -3,19 +3,36 @@ data "azurerm_client_config" "current" {}
 data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
+
 data "azuread_user" "users" {
-  for_each            = local.user_principals # Uses the local we created
-  user_principal_name = each.value
+  for_each = toset([
+    for ra in var.container_role_assignments : ra.principal_name
+    if ra.principal_type == "User"
+  ])
+  user_principal_name = each.key
 }
 
 data "azuread_group" "groups" {
-  for_each     = local.group_principals # Uses the local we created
-  display_name = each.value
+  for_each = toset([
+    for ra in var.container_role_assignments : ra.principal_name
+    if ra.principal_type == "Group"
+  ])
+  display_name = each.key
 }
 
+
 data "azuread_service_principal" "sps" {
-  for_each     = local.sp_principals # Uses the local we created
-  display_name = each.value
+  for_each = toset([
+    for ra in var.container_role_assignments : ra.principal_name
+    if ra.principal_type == "ServicePrincipal"
+  ])
+  display_name = each.key
+}
+
+data "azurerm_private_dns_zone" "privatelink_blob_azure_net" {
+  provider            = azurerm.pe-dns-infra
+  name                = "privatelink.blob.core.windows.net"
+  resource_group_name = "terraform"
 }
 
 data "azurerm_private_dns_zone" "privatelink_queue_azure_net" {

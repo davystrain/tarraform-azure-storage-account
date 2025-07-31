@@ -15,6 +15,7 @@ resource "azurerm_storage_account" "sa" {
   shared_access_key_enabled        = var.shared_access_key_enabled
   local_user_enabled               = var.local_user_enabled
   tags                             = merge(data.azurerm_resource_group.rg.tags, var.tags)
+
   dynamic "network_rules" {
     for_each = var.network_rules == null ? [] : [var.network_rules]
     content {
@@ -41,26 +42,15 @@ resource "azurerm_role_assignment" "container_roles" {
   depends_on           = [azurerm_storage_account.sa, azurerm_storage_container.sc]
 }
 
-# resource "azurerm_storage_queue" "sq" {
-#   for_each             = { for q in var.queues : q.name => q }
-#   name                 = each.value.name
-#   storage_account_name = azurerm_storage_account.sa.name
-#   depends_on           = [azurerm_private_endpoint.queue]
-# }
-
-resource "azapi_resource" "queue" {
-  for_each  = { for q in var.queues : q.name => q }
-  type      = "Microsoft.Storage/storageAccounts/queueServices/queues@2022-09-01"
-  name      = each.value.name
-  parent_id = "${azurerm_storage_account.sa.id}/queueServices/default"
-  body = {
-    properties = try(each.value.properties, {})
-  }
-  depends_on = [azurerm_private_endpoint.queue]
+resource "azurerm_storage_queue" "sq" {
+  for_each             = { for q in var.queues : q.name => q }
+  name                 = each.value.name
+  storage_account_name = azurerm_storage_account.sa.name
+  metadata             = try(each.value.metadata, {})
 }
 
 # UPDATED: Tables using for_each
-resource "azapi_resource" "st" {
+resource "azapi_resource" "reusable_module_table" {
   for_each  = { for t in var.tables : t.name => t }
   type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"
   name      = each.value.name
@@ -68,11 +58,34 @@ resource "azapi_resource" "st" {
   body = {
     properties = try(each.value.properties, {})
   }
-  depends_on = [azurerm_private_endpoint.table]
 }
 
+resource "azurerm_private_endpoint" "blob" {
+  count = length(var.containers) > 0 ? 1 : 0
+
+  name                          = "${azurerm_storage_account.sa.name}-pe1"
+  location                      = data.azurerm_resource_group.rg.location
+  resource_group_name           = data.azurerm_resource_group.rg.name
+  subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
+  custom_network_interface_name = "pe1-${var.name}"
+
+  private_dns_zone_group {
+    name                 = "default"
+    private_dns_zone_ids = [data.azurerm_private_dns_zone.privatelink_blob_azure_net.id]
+  }
+
+  private_service_connection {
+    name                           = "${azurerm_storage_account.sa.name}-psc"
+    private_connection_resource_id = azurerm_storage_account.sa.id
+    subresource_names              = ["blob"]
+    is_manual_connection           = false
+  }
+  depends_on = [azurerm_storage_account.sa]
+
+  tags = var.tags
+}
 resource "azurerm_private_endpoint" "queue" {
-  for_each = { for q in var.queues : q.name => q }
+  count = length(var.queues) > 0 ? 1 : 0
 
   name                          = "${azurerm_storage_account.sa.name}-pe2"
   location                      = data.azurerm_resource_group.rg.location
@@ -91,10 +104,12 @@ resource "azurerm_private_endpoint" "queue" {
     subresource_names              = ["queue"]
     is_manual_connection           = false
   }
-}
+  depends_on = [azurerm_storage_account.sa]
 
+  tags = var.tags
+}
 resource "azurerm_private_endpoint" "table" {
-  for_each = { for t in var.tables : t.name => t }
+  count = length(var.tables) > 0 ? 1 : 0
 
   name                          = "${azurerm_storage_account.sa.name}-pe3"
   location                      = data.azurerm_resource_group.rg.location
@@ -113,4 +128,7 @@ resource "azurerm_private_endpoint" "table" {
     subresource_names              = ["table"]
     is_manual_connection           = false
   }
+  depends_on = [azurerm_storage_account.sa]
+
+  tags = var.tags
 }

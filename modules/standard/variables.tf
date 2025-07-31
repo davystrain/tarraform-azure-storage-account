@@ -79,7 +79,6 @@ variable "local_user_enabled" {
   type        = bool
   default     = false
 }
-
 variable "tags" {
   description = "A map of tags to assign to the storage account."
   type        = map(string)
@@ -87,11 +86,20 @@ variable "tags" {
 }
 
 variable "containers" {
-  description = "List of storage containers with optional role assignments"
+  description = "List of storage containers"
   type = list(object({
-    name                  = string
-    container_access_type = optional(string, "private")
-    role_assignments      = optional(map(map(list(string))), {})
+    name = string
+  }))
+  default = []
+}
+
+variable "container_role_assignments" {
+  description = "List of role assignments for containers"
+  type = list(object({
+    container_name       = string
+    principal_type       = string
+    role_definition_name = string
+    principal_name       = string
   }))
   default = []
 }
@@ -111,5 +119,4 @@ variable "tables" {
   }))
   default = []
 }
-
 

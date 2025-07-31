@@ -85,6 +85,22 @@ variable "tags" {
   default     = {}
 }
 
+variable "network_rules" {
+  description = "Network rules block."
+  type = object({
+    bypass                     = list(string)
+    default_action             = string
+    ip_rules                   = list(string)
+    virtual_network_subnet_ids = list(string)
+  })
+  default = {
+    bypass                     = ["AzureServices"]
+    default_action             = "Allow"
+    ip_rules                   = []
+    virtual_network_subnet_ids = []
+  }
+}
+
 variable "containers" {
   description = "List of storage containers"
   type = list(object({

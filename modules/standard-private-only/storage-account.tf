@@ -15,30 +15,6 @@ resource "azurerm_storage_account" "reusable_module" {
   shared_access_key_enabled        = var.shared_access_key_enabled
   local_user_enabled               = var.local_user_enabled
   tags                             = var.tags
-  dynamic "blob_properties" {
-    for_each = var.blob_properties == null ? [] : [var.blob_properties]
-    content {
-      change_feed_enabled           = blob_properties.value.change_feed_enabled
-      change_feed_retention_in_days = blob_properties.value.change_feed_retention_in_days
-      default_service_version       = blob_properties.value.default_service_version
-      last_access_time_enabled      = blob_properties.value.last_access_time_enabled
-      versioning_enabled            = blob_properties.value.versioning_enabled
-
-      container_delete_retention_policy {
-        days = blob_properties.value.container_delete_retention_policy.days
-      }
-
-      delete_retention_policy {
-        days                     = blob_properties.value.delete_retention_policy.days
-        permanent_delete_enabled = blob_properties.value.delete_retention_policy.permanent_delete_enabled
-      }
-
-      restore_policy {
-        days = blob_properties.value.restore_policy.days
-      }
-    }
-  }
-
 
   dynamic "network_rules" {
     for_each = var.network_rules == null ? [] : [var.network_rules]
@@ -52,58 +28,35 @@ resource "azurerm_storage_account" "reusable_module" {
 }
 
 resource "azurerm_storage_container" "reusable_module" {
-  count                 = length(var.containers)
-  name                  = var.containers[count.index].name
-  storage_account_id    = azurerm_storage_account.reusable_module.id
-  container_access_type = var.containers[count.index].container_access_type
-  depends_on            = [azurerm_storage_account.reusable_module]
+  for_each           = { for c in var.containers : c.name => c }
+  name               = each.value.name
+  storage_account_id = azurerm_storage_account.reusable_module.id
 }
 
-resource "azurerm_storage_blob" "reusable_module" {
-  count                  = length(var.blobs)
-  name                   = var.blobs[count.index].name
-  storage_account_name   = azurerm_storage_account.reusable_module.name
-  storage_container_name = var.blobs[count.index].storage_container_name
-  type                   = var.blobs[count.index].type
-  depends_on             = [azurerm_storage_container.reusable_module]
+resource "azurerm_role_assignment" "container_roles" {
+  for_each = local.container_role_assignments
+
+  scope                = each.value.scope
+  role_definition_name = each.value.role_definition_name
+  principal_id         = each.value.principal_id
+  depends_on           = [azurerm_storage_account.reusable_module, azurerm_storage_container.reusable_module]
 }
 
 resource "azurerm_storage_queue" "reusable_module" {
-  count                = length(var.queues)
-  name                 = var.queues[count.index].name
+  for_each             = { for q in var.queues : q.name => q }
+  name                 = each.value.name
   storage_account_name = azurerm_storage_account.reusable_module.name
-  depends_on           = [azurerm_storage_account.reusable_module]
+  metadata             = try(each.value.metadata, {})
 }
 
-# resource "azurerm_storage_table" "reusable_module" {
-#   count                = length(var.tables)
-#   name                 = var.tables[count.index].name
-#   storage_account_name = azurerm_storage_account.reusable_module.name
-
-#   dynamic "acl" {
-#     for_each = try(var.tables[count.index].acl, [])
-#     content {
-#       id = acl.value.id
-
-#       dynamic "access_policy" {
-#         for_each = acl.value.access_policy != null ? [acl.value.access_policy] : []
-#         content {
-#           expiry      = access_policy.value.expiry
-#           permissions = access_policy.value.permissions
-#           start       = access_policy.value.start
-#         }
-#       }
-#     }
-#   }
-# }
-
+# UPDATED: Tables using for_each
 resource "azapi_resource" "reusable_module_table" {
-  count     = length(var.tables)
+  for_each  = { for t in var.tables : t.name => t }
   type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"
-  name      = var.tables[count.index].name
+  name      = each.value.name
   parent_id = "${azurerm_storage_account.reusable_module.id}/tableServices/default"
   body = {
-    properties = var.tables[count.index].properties
+    properties = try(each.value.properties, {})
   }
 }
 

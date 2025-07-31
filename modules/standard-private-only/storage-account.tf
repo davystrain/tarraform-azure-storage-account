@@ -1,7 +1,7 @@
-resource "azurerm_storage_account" "reusable_module" {
+resource "azurerm_storage_account" "sa" {
   name                             = var.name
-  resource_group_name              = data.azurerm_resource_group.private_endpoint.name
-  location                         = data.azurerm_resource_group.private_endpoint.location
+  resource_group_name              = data.azurerm_resource_group.rg.name
+  location                         = data.azurerm_resource_group.rg.location
   access_tier                      = var.access_tier
   account_replication_type         = var.account_replication_type
   account_tier                     = var.account_tier
@@ -14,7 +14,7 @@ resource "azurerm_storage_account" "reusable_module" {
   public_network_access_enabled    = var.public_network_access_enabled
   shared_access_key_enabled        = var.shared_access_key_enabled
   local_user_enabled               = var.local_user_enabled
-  tags                             = var.tags
+  tags                             = merge(data.azurerm_resource_group.rg.tags, var.tags)
 
   dynamic "network_rules" {
     for_each = var.network_rules == null ? [] : [var.network_rules]
@@ -27,10 +27,10 @@ resource "azurerm_storage_account" "reusable_module" {
   }
 }
 
-resource "azurerm_storage_container" "reusable_module" {
+resource "azurerm_storage_container" "sc" {
   for_each           = { for c in var.containers : c.name => c }
   name               = each.value.name
-  storage_account_id = azurerm_storage_account.reusable_module.id
+  storage_account_id = azurerm_storage_account.sa.id
 }
 
 resource "azurerm_role_assignment" "container_roles" {
@@ -39,13 +39,13 @@ resource "azurerm_role_assignment" "container_roles" {
   scope                = each.value.scope
   role_definition_name = each.value.role_definition_name
   principal_id         = each.value.principal_id
-  depends_on           = [azurerm_storage_account.reusable_module, azurerm_storage_container.reusable_module]
+  depends_on           = [azurerm_storage_account.sa, azurerm_storage_container.sc]
 }
 
-resource "azurerm_storage_queue" "reusable_module" {
+resource "azurerm_storage_queue" "sq" {
   for_each             = { for q in var.queues : q.name => q }
   name                 = each.value.name
-  storage_account_name = azurerm_storage_account.reusable_module.name
+  storage_account_name = azurerm_storage_account.sa.name
   metadata             = try(each.value.metadata, {})
 }
 
@@ -54,7 +54,7 @@ resource "azapi_resource" "reusable_module_table" {
   for_each  = { for t in var.tables : t.name => t }
   type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"
   name      = each.value.name
-  parent_id = "${azurerm_storage_account.reusable_module.id}/tableServices/default"
+  parent_id = "${azurerm_storage_account.sa.id}/tableServices/default"
   body = {
     properties = try(each.value.properties, {})
   }
@@ -63,7 +63,7 @@ resource "azapi_resource" "reusable_module_table" {
 resource "azurerm_private_endpoint" "blob" {
   count = length(var.containers) > 0 ? 1 : 0
 
-  name                          = "${azurerm_storage_account.reusable_module.name}-pe1"
+  name                          = "${azurerm_storage_account.sa.name}-pe1"
   location                      = data.azurerm_resource_group.private_endpoint.location
   resource_group_name           = data.azurerm_resource_group.private_endpoint.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
@@ -75,21 +75,21 @@ resource "azurerm_private_endpoint" "blob" {
   }
 
   private_service_connection {
-    name                           = "${azurerm_storage_account.reusable_module.name}-psc"
-    private_connection_resource_id = azurerm_storage_account.reusable_module.id
+    name                           = "${azurerm_storage_account.sa.name}-psc"
+    private_connection_resource_id = azurerm_storage_account.sa.id
     subresource_names              = ["blob"]
     is_manual_connection           = false
   }
-  depends_on = [azurerm_storage_account.reusable_module]
+  depends_on = [azurerm_storage_account.sa]
 
   tags = var.tags
 }
 resource "azurerm_private_endpoint" "queue" {
   count = length(var.queues) > 0 ? 1 : 0
 
-  name                          = "${azurerm_storage_account.reusable_module.name}-pe2"
-  location                      = data.azurerm_resource_group.private_endpoint.location
-  resource_group_name           = data.azurerm_resource_group.private_endpoint.name
+  name                          = "${azurerm_storage_account.sa.name}-pe2"
+  location                      = data.azurerm_resource_group.rg.location
+  resource_group_name           = data.azurerm_resource_group.rg.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
   custom_network_interface_name = "pe2-${var.name}"
 
@@ -99,21 +99,21 @@ resource "azurerm_private_endpoint" "queue" {
   }
 
   private_service_connection {
-    name                           = "${azurerm_storage_account.reusable_module.name}-psc"
-    private_connection_resource_id = azurerm_storage_account.reusable_module.id
+    name                           = "${azurerm_storage_account.sa.name}-psc"
+    private_connection_resource_id = azurerm_storage_account.sa.id
     subresource_names              = ["queue"]
     is_manual_connection           = false
   }
-  depends_on = [azurerm_storage_account.reusable_module]
+  depends_on = [azurerm_storage_account.sa]
 
   tags = var.tags
 }
 resource "azurerm_private_endpoint" "table" {
   count = length(var.tables) > 0 ? 1 : 0
 
-  name                          = "${azurerm_storage_account.reusable_module.name}-pe3"
-  location                      = data.azurerm_resource_group.private_endpoint.location
-  resource_group_name           = data.azurerm_resource_group.private_endpoint.name
+  name                          = "${azurerm_storage_account.sa.name}-pe3"
+  location                      = data.azurerm_resource_group.rg.location
+  resource_group_name           = data.azurerm_resource_group.rg.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
   custom_network_interface_name = "pe3-${var.name}"
 
@@ -123,12 +123,12 @@ resource "azurerm_private_endpoint" "table" {
   }
 
   private_service_connection {
-    name                           = "${azurerm_storage_account.reusable_module.name}-psc"
-    private_connection_resource_id = azurerm_storage_account.reusable_module.id
+    name                           = "${azurerm_storage_account.sa.name}-psc"
+    private_connection_resource_id = azurerm_storage_account.sa.id
     subresource_names              = ["table"]
     is_manual_connection           = false
   }
-  depends_on = [azurerm_storage_account.reusable_module]
+  depends_on = [azurerm_storage_account.sa]
 
   tags = var.tags
 }

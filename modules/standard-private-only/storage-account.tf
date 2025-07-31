@@ -50,7 +50,7 @@ resource "azurerm_storage_queue" "sq" {
 }
 
 # UPDATED: Tables using for_each
-resource "azapi_resource" "reusable_module_table" {
+resource "azapi_resource" "st" {
   for_each  = { for t in var.tables : t.name => t }
   type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"
   name      = each.value.name

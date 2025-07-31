@@ -61,8 +61,6 @@ resource "azapi_resource" "st" {
 }
 
 resource "azurerm_private_endpoint" "blob" {
-  count = length(var.containers) > 0 ? 1 : 0
-
   name                          = "${azurerm_storage_account.sa.name}-pe1"
   location                      = data.azurerm_resource_group.rg.location
   resource_group_name           = data.azurerm_resource_group.rg.name
@@ -81,12 +79,8 @@ resource "azurerm_private_endpoint" "blob" {
     is_manual_connection           = false
   }
   depends_on = [azurerm_storage_account.sa]
-
-  tags = var.tags
 }
 resource "azurerm_private_endpoint" "queue" {
-  count = length(var.queues) > 0 ? 1 : 0
-
   name                          = "${azurerm_storage_account.sa.name}-pe2"
   location                      = data.azurerm_resource_group.rg.location
   resource_group_name           = data.azurerm_resource_group.rg.name
@@ -105,12 +99,8 @@ resource "azurerm_private_endpoint" "queue" {
     is_manual_connection           = false
   }
   depends_on = [azurerm_storage_account.sa]
-
-  tags = var.tags
 }
 resource "azurerm_private_endpoint" "table" {
-  count = length(var.tables) > 0 ? 1 : 0
-
   name                          = "${azurerm_storage_account.sa.name}-pe3"
   location                      = data.azurerm_resource_group.rg.location
   resource_group_name           = data.azurerm_resource_group.rg.name
@@ -129,6 +119,4 @@ resource "azurerm_private_endpoint" "table" {
     is_manual_connection           = false
   }
   depends_on = [azurerm_storage_account.sa]
-
-  tags = var.tags
 }

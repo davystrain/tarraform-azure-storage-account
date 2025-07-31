@@ -61,11 +61,11 @@ resource "azapi_resource" "st" {
 }
 
 resource "azurerm_private_endpoint" "blob" {
-  name                          = "${azurerm_storage_account.sa.name}-pe1"
+  name                          = "pe-blob-${var.name}"
   location                      = data.azurerm_resource_group.rg.location
   resource_group_name           = data.azurerm_resource_group.rg.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
-  custom_network_interface_name = "pe1-${var.name}"
+  custom_network_interface_name = "pe-blob-${var.name}-nic"
 
   private_dns_zone_group {
     name                 = "default"
@@ -73,7 +73,7 @@ resource "azurerm_private_endpoint" "blob" {
   }
 
   private_service_connection {
-    name                           = "${azurerm_storage_account.sa.name}-psc"
+    name                           = "pe-blob-${var.name}-psc"
     private_connection_resource_id = azurerm_storage_account.sa.id
     subresource_names              = ["blob"]
     is_manual_connection           = false
@@ -82,11 +82,11 @@ resource "azurerm_private_endpoint" "blob" {
 }
 
 resource "azurerm_private_endpoint" "queue" {
-  name                          = "${azurerm_storage_account.sa.name}-pe2"
+  name                          = "pe-queue-${var.name}"
   location                      = data.azurerm_resource_group.rg.location
   resource_group_name           = data.azurerm_resource_group.rg.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
-  custom_network_interface_name = "pe2-${var.name}"
+  custom_network_interface_name = "pe-queue-${var.name}-nic"
 
   private_dns_zone_group {
     name                 = "default"
@@ -94,7 +94,7 @@ resource "azurerm_private_endpoint" "queue" {
   }
 
   private_service_connection {
-    name                           = "${azurerm_storage_account.sa.name}-psc"
+    name                           = "pe-queue-${var.name}-psc"
     private_connection_resource_id = azurerm_storage_account.sa.id
     subresource_names              = ["queue"]
     is_manual_connection           = false
@@ -102,11 +102,11 @@ resource "azurerm_private_endpoint" "queue" {
   depends_on = [azurerm_storage_account.sa]
 }
 resource "azurerm_private_endpoint" "table" {
-  name                          = "${azurerm_storage_account.sa.name}-pe3"
+  name                          = "pe-table-${var.name}"
   location                      = data.azurerm_resource_group.rg.location
   resource_group_name           = data.azurerm_resource_group.rg.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
-  custom_network_interface_name = "pe3-${var.name}"
+  custom_network_interface_name = "pe-table-${var.name}-nic"
 
   private_dns_zone_group {
     name                 = "default"
@@ -114,7 +114,7 @@ resource "azurerm_private_endpoint" "table" {
   }
 
   private_service_connection {
-    name                           = "${azurerm_storage_account.sa.name}-psc"
+    name                           = "pe-table-${var.name}-psc"
     private_connection_resource_id = azurerm_storage_account.sa.id
     subresource_names              = ["table"]
     is_manual_connection           = false

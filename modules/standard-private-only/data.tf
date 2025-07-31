@@ -13,6 +13,15 @@ data "azuread_user" "users" {
 }
 
 
+data "azuread_user" "users" {
+  for_each = toset([
+    for ra in var.container_role_assignments : ra.principal_name
+    if ra.principal_type == "User"
+  ])
+  user_principal_name = each.key
+}
+
+
 data "azuread_group" "groups" {
   for_each = toset([
     for ra in var.container_role_assignments : ra.principal_name
@@ -34,6 +43,16 @@ data "azurerm_private_dns_zone" "privatelink_blob_azure_net" {
   provider            = azurerm.pe-dns-infra
   name                = "privatelink.blob.core.windows.net"
   resource_group_name = "terraform"
+
+data "azuread_group" "groups" {
+  for_each     = local.group_principals # Uses the local we created
+  display_name = each.value
+}
+
+data "azuread_service_principal" "sps" {
+  for_each     = local.sp_principals # Uses the local we created
+  display_name = each.value
+
 }
 
 data "azurerm_private_dns_zone" "privatelink_queue_azure_net" {

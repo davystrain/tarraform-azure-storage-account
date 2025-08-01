@@ -15,17 +15,14 @@ resource "azurerm_storage_account" "sa" {
   shared_access_key_enabled        = var.shared_access_key_enabled
   local_user_enabled               = var.local_user_enabled
   tags                             = merge(data.azurerm_resource_group.rg.tags, var.tags)
-
-  dynamic "network_rules" {
-    for_each = var.network_rules == null ? [] : [var.network_rules]
-    content {
-      bypass                     = network_rules.value.bypass
-      default_action             = network_rules.value.default_action
-      ip_rules                   = network_rules.value.ip_rules
-      virtual_network_subnet_ids = network_rules.value.virtual_network_subnet_ids
-    }
+  network_rules {
+    bypass                     = var.network_rules.bypass
+    default_action             = var.network_rules.default_action
+    ip_rules                   = var.network_rules.ip_rules
+    virtual_network_subnet_ids = var.network_rules.virtual_network_subnet_ids
   }
 }
+
 
 resource "azurerm_storage_container" "sc" {
   for_each           = { for c in var.containers : c.name => c }

@@ -31,17 +31,17 @@ data "azuread_service_principal" "sps" {
 
 data "azurerm_private_dns_zone" "privatelink_blob_azure_net" {
   name                = "privatelink.blob.core.windows.net"
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = "terraform"
 }
 
 data "azurerm_private_dns_zone" "privatelink_queue_azure_net" {
   name                = "privatelink.queue.core.windows.net"
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = "terraform"
 }
 
 data "azurerm_private_dns_zone" "privatelink_table_azure_net" {
   name                = "privatelink.table.core.windows.net"
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = "terraform"
 }
 
 data "azurerm_subnet" "private_endpoint_subnet" {

@@ -78,7 +78,6 @@ resource "azurerm_private_endpoint" "blob" {
     subresource_names              = ["blob"]
     is_manual_connection           = false
   }
-  depends_on = [azurerm_storage_account.sa]
 }
 
 resource "azurerm_private_endpoint" "queue" {
@@ -99,8 +98,8 @@ resource "azurerm_private_endpoint" "queue" {
     subresource_names              = ["queue"]
     is_manual_connection           = false
   }
-  depends_on = [azurerm_storage_account.sa]
 }
+
 resource "azurerm_private_endpoint" "table" {
   name                          = "pe-table-${var.name}"
   location                      = data.azurerm_resource_group.rg.location
@@ -119,5 +118,4 @@ resource "azurerm_private_endpoint" "table" {
     subresource_names              = ["table"]
     is_manual_connection           = false
   }
-  depends_on = [azurerm_storage_account.sa]
 }

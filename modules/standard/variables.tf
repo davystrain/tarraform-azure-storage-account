@@ -94,8 +94,8 @@ variable "network_rules" {
     virtual_network_subnet_ids = list(string)
   })
   default = {
-    bypass                     = ["AzureServices"]
-    default_action             = "Allow"
+    bypass                     = []
+    default_action             = "Deny"
     ip_rules                   = []
     virtual_network_subnet_ids = []
   }

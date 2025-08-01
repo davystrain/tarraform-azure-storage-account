@@ -99,7 +99,7 @@ variable "network_rules" {
   })
   default = {
     bypass                     = ["AzureServices"]
-    default_action             = "Allow"
+    default_action             = "Deny"
     ip_rules                   = []
     virtual_network_subnet_ids = []
   }

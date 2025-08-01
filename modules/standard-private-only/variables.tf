@@ -101,7 +101,7 @@ variable "network_rules" {
     bypass                     = ["AzureServices"]
     default_action             = "Deny"
     ip_rules                   = []
-    virtual_network_subnet_ids = [data.azurerm_subnet.private_endpoint_subnet.id]
+    virtual_network_subnet_ids = []
   }
 }
 

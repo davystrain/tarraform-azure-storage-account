@@ -94,10 +94,10 @@ variable "network_rules" {
     virtual_network_subnet_ids = list(string)
   })
   default = {
-    bypass                     = []
+    bypass                     = ["None"]
     default_action             = "Deny"
     ip_rules                   = []
-    virtual_network_subnet_ids = []
+    virtual_network_subnet_ids = ["/subscriptions/54d76c1b-a9fe-4b89-93cb-2585ce0dacb9/resourceGroups/terraform/providers/Microsoft.Network/virtualNetworks/self-hosted-runner-vnet/subnets/virtual-machine"]
   }
 }
 

@@ -22,7 +22,7 @@ resource "azurerm_storage_account" "sa" {
       bypass                     = network_rules.value.bypass
       default_action             = network_rules.value.default_action
       ip_rules                   = network_rules.value.ip_rules
-      virtual_network_subnet_ids = [data.azurerm_subnet.private_endpoint_subnet.id]
+      virtual_network_subnet_ids = network_rules.value.virtual_network_subnet_ids
     }
   }
 }

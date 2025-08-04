@@ -144,15 +144,12 @@ variable "tables" {
 variable "private_endpoint_subnet_name" {
   description = "The name of the subnet where the private endpoint will be created."
   type        = string
-  default     = null
 }
 variable "virtual_network_name" {
   description = "The name of the virtual network where the subnet resides"
   type        = string
-  default     = null
 }
 variable "virtual_network_resource_group_name" {
   description = "The name of the resource group where the virtual network is located."
   type        = string
-  default     = null
 }

@@ -46,7 +46,6 @@ resource "azurerm_storage_queue" "sq" {
   for_each             = { for q in var.queues : q.name => q }
   name                 = each.value.name
   storage_account_name = azurerm_storage_account.sa.name
-  metadata             = try(each.value.metadata, {})
 }
 
 # UPDATED: Tables using for_each

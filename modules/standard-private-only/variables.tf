@@ -126,8 +126,12 @@ variable "container_role_assignments" {
 }
 
 variable "queues" {
+  description = "List of storage queues"
   type = list(object({
-    name = string
+    name       = string
+    properties = optional(object({
+      metadata = optional(map(string), {})
+    }), {})
   }))
   default = []
 }
@@ -136,7 +140,16 @@ variable "tables" {
   description = "List of storage tables"
   type = list(object({
     name       = string
-    properties = optional(map(any), {})
+    properties = optional(object({
+      signedIdentifiers = optional(list(object({
+        id = string
+        accessPolicy = object({
+          start      = string
+          expiry     = string
+          permission = string
+        })
+      })), [])
+    }), {})
   }))
   default = []
 }

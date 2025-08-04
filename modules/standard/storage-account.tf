@@ -42,21 +42,21 @@ resource "azurerm_role_assignment" "container_roles" {
   depends_on           = [azurerm_storage_account.sa, azurerm_storage_container.sc]
 }
 
-# resource "azurerm_storage_queue" "sq" {
-#   for_each             = { for q in var.queues : q.name => q }
-#   name                 = each.value.name
-#   storage_account_name = azurerm_storage_account.sa.name
-# }
-
-resource "azapi_resource" "sq" {
+resource "azurerm_storage_queue" "sq" {
   for_each             = { for q in var.queues : q.name => q }
-  type                 = "Microsoft.Storage/storageAccounts/queueServices/queues@2022-09-01"
   name                 = each.value.name
-  parent_id            = "${azurerm_storage_account.sa.id}/queueServices/default"
-  body = {
-    properties = try(each.value.properties, {})
-  }
+  storage_account_name = azurerm_storage_account.sa.name
 }
+
+# resource "azapi_resource" "sq" {
+#   for_each             = { for q in var.queues : q.name => q }
+#   type                 = "Microsoft.Storage/storageAccounts/queueServices/queues@2022-09-01"
+#   name                 = each.value.name
+#   parent_id            = "${azurerm_storage_account.sa.id}/queueServices/default"
+#   body = {
+#     properties = try(each.value.properties, {})
+#   }
+# }
 resource "azapi_resource" "st" {
   for_each  = { for t in var.tables : t.name => t }
   type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"

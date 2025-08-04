@@ -46,10 +46,9 @@ resource "azurerm_role_assignment" "container_roles" {
 #   for_each             = { for q in var.queues : q.name => q }
 #   name                 = each.value.name
 #   storage_account_name = azurerm_storage_account.sa.name
-#   # depends_on = [ azurerm_private_endpoint.queue ]
 # }
 
-resource "azapi_resource" "queue" {
+resource "azapi_resource" "sq" {
   for_each             = { for q in var.queues : q.name => q }
   type                 = "Microsoft.Storage/storageAccounts/queueServices/queues@2022-09-01"
   name                 = each.value.name

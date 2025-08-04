@@ -73,7 +73,7 @@ Use the locals value in your Terraform configuration to convert the yaml files i
 
 ```hcl
 module "yaml-to-standard" {
-  source           = "git::https://github.com/racwa/terraform-azure-storage-account//modules//yaml-to-standard?ref=main"
+  source           = "git::https://github.com/davystrain/module-resource-group.git//modules//yaml-to-standard?ref=main"
   yaml_config_path = "../../data/standard"
 }
 ```
@@ -82,7 +82,7 @@ module "yaml-to-standard" {
 The module will output a map of Storage Account configurations that can be used with the [terraform-azure-storage-account](https://github.com/racwa/terraform-azure-storage-account) module. There are many options available and you may wish to override some of the defaults. Below is an example of how to use the output from the yaml-to-standard module to create Storage Accounts and additioanlly role assignments at the container scope:
 ```hcl
 module "storage" {
-  source   = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard?ref=[git-tag]"
+  source   = "git::https://github.com/davystrain/module-resource-group.git//modules//standard?ref=main"
   for_each = module.yaml-to-standard.storage_account_map
 
   # Required
@@ -160,7 +160,7 @@ storage_accounts:
 
 ```hcl
 module "yaml-to-standard-private-only" {
-  source           = "git::https://github.com/racwa/terraform-azure-storage-account//modules//yaml-standard-private-only?ref=[git-tag]"
+  source           = "git::https://github.com/davystrain/module-resource-group.git//modules//yaml-to-standard-private-only?ref=main"
   yaml_config_path = "../../data/standard-private-only"
 }
 ```
@@ -169,7 +169,7 @@ module "yaml-to-standard-private-only" {
 When deploying private only storage accounts the private endpoint subnet will need referenced by additional arguments as shown in the example below and the module will output a map of Storage Account configurations that can be used with the `terraform-azure-storage-account` module:
 ```hcl
 module "storage" {
-  source   = "git::https://github.com/racwa/terraform-azure-storage-account//modules//standard-private-only?ref=[git-tag]"
+  source   = "git::https://github.com/davystrain/module-resource-group.git//modules//standard-private-only?ref=main"
   for_each = module.yaml-to-standard-private-only.storage_account_map
 
   providers = {

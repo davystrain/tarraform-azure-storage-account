@@ -126,11 +126,14 @@ variable "container_role_assignments" {
 }
 
 variable "queues" {
+  description = "List of storage queues"
   type = list(object({
-    name = string
+    name       = string
+    properties = optional(map(any), {})
   }))
   default = []
 }
+
 
 variable "tables" {
   description = "List of storage tables"

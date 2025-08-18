@@ -69,6 +69,7 @@ resource "azurerm_private_endpoint" "blob" {
   resource_group_name           = data.azurerm_resource_group.rg.name
   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
   custom_network_interface_name = "pe-blob-${var.name}-nic"
+  tags                          = merge(data.azurerm_resource_group.rg.tags, var.tags)
 
   private_dns_zone_group {
     name                 = "default"
@@ -83,42 +84,44 @@ resource "azurerm_private_endpoint" "blob" {
   }
 }
 
-# resource "azurerm_private_endpoint" "queue" {
-#   name                          = "pe-queue-${var.name}"
-#   location                      = data.azurerm_resource_group.rg.location
-#   resource_group_name           = data.azurerm_resource_group.rg.name
-#   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
-#   custom_network_interface_name = "pe-queue-${var.name}-nic"
+resource "azurerm_private_endpoint" "queue" {
+  name                          = "pe-queue-${var.name}"
+  location                      = data.azurerm_resource_group.rg.location
+  resource_group_name           = data.azurerm_resource_group.rg.name
+  subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
+  custom_network_interface_name = "pe-queue-${var.name}-nic"
+  tags                          = merge(data.azurerm_resource_group.rg.tags, var.tags)
 
-#   private_dns_zone_group {
-#     name                 = "default"
-#     private_dns_zone_ids = [data.azurerm_private_dns_zone.privatelink_queue_azure_net.id]
-#   }
+  private_dns_zone_group {
+    name                 = "default"
+    private_dns_zone_ids = [data.azurerm_private_dns_zone.privatelink_queue_azure_net.id]
+  }
 
-#   private_service_connection {
-#     name                           = "pe-queue-${var.name}-psc"
-#     private_connection_resource_id = azurerm_storage_account.sa.id
-#     subresource_names              = ["queue"]
-#     is_manual_connection           = false
-#   }
-# }
+  private_service_connection {
+    name                           = "pe-queue-${var.name}-psc"
+    private_connection_resource_id = azurerm_storage_account.sa.id
+    subresource_names              = ["queue"]
+    is_manual_connection           = false
+  }
+}
 
-# resource "azurerm_private_endpoint" "table" {
-#   name                          = "pe-table-${var.name}"
-#   location                      = data.azurerm_resource_group.rg.location
-#   resource_group_name           = data.azurerm_resource_group.rg.name
-#   subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
-#   custom_network_interface_name = "pe-table-${var.name}-nic"
+resource "azurerm_private_endpoint" "table" {
+  name                          = "pe-table-${var.name}"
+  location                      = data.azurerm_resource_group.rg.location
+  resource_group_name           = data.azurerm_resource_group.rg.name
+  subnet_id                     = data.azurerm_subnet.private_endpoint_subnet.id
+  custom_network_interface_name = "pe-table-${var.name}-nic"
+  tags                          = merge(data.azurerm_resource_group.rg.tags, var.tags)
 
-#   private_dns_zone_group {
-#     name                 = "default"
-#     private_dns_zone_ids = [data.azurerm_private_dns_zone.privatelink_table_azure_net.id]
-#   }
+  private_dns_zone_group {
+    name                 = "default"
+    private_dns_zone_ids = [data.azurerm_private_dns_zone.privatelink_table_azure_net.id]
+  }
 
-#   private_service_connection {
-#     name                           = "pe-table-${var.name}-psc"
-#     private_connection_resource_id = azurerm_storage_account.sa.id
-#     subresource_names              = ["table"]
-#     is_manual_connection           = false
-#   }
-# }
+  private_service_connection {
+    name                           = "pe-table-${var.name}-psc"
+    private_connection_resource_id = azurerm_storage_account.sa.id
+    subresource_names              = ["table"]
+    is_manual_connection           = false
+  }
+}

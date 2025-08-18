@@ -45,7 +45,7 @@ data "azurerm_private_dns_zone" "privatelink_blob_azure_net" {
 #   provider            = azurerm.pe-dns-infra
 #   name                = "privatelink.table.core.windows.net"
 #   resource_group_name = "terraform"
-}
+# }
 
 data "azurerm_subnet" "private_endpoint_subnet" {
   name                 = var.private_endpoint_subnet_name

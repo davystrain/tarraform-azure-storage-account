@@ -77,7 +77,7 @@ variable "shared_access_key_enabled" {
 variable "local_user_enabled" {
   description = "Enable local user authentication."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "infrastructure_encryption_enabled" {

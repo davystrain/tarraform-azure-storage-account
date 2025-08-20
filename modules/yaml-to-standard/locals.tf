@@ -16,7 +16,7 @@ locals {
         min_tls_version                  = try(v.min_tls_version, null)
         public_network_access_enabled    = try(v.public_network_access_enabled, null)
         shared_access_key_enabled        = try(v.shared_access_key_enabled, null)
-        local_user_enabled               = try(v.local_user_enabled, null)
+        local_user_enabled               = try(v.local_user_enabled)
         network_rules                    = try(v.network_rules, null)
         containers                       = try(v.containers, [])
         queues                           = try(v.queues, [])

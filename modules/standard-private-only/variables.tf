@@ -87,7 +87,7 @@ variable "local_user_enabled" {
 variable "infrastructure_encryption_enabled" {
   description = "Enable infrastructure encryption."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "tags" {

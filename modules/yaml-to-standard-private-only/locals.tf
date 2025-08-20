@@ -17,6 +17,7 @@ locals {
         public_network_access_enabled       = try(v.public_network_access_enabled, null)
         shared_access_key_enabled           = try(v.shared_access_key_enabled, null)
         local_user_enabled                  = try(v.local_user_enabled, null)
+        infrastructure_encryption_enabled   = try(v.infrastructure_encryption_enabled, null)
         network_rules                       = try(v.network_rules, null)
         containers                          = try(v.containers, [])
         queues                              = try(v.queues, [])

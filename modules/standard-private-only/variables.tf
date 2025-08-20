@@ -83,6 +83,13 @@ variable "local_user_enabled" {
   type        = bool
   default     = false
 }
+
+variable "infrastructure_encryption_enabled" {
+  description = "Enable infrastructure encryption."
+  type        = bool
+  default     = false
+}
+
 variable "tags" {
   description = "A map of tags to assign to the storage account."
   type        = map(string)

@@ -114,7 +114,7 @@ variable "blob_properties" {
   default = {
     change_feed_enabled           = true
     change_feed_retention_in_days = 30
-    default_service_version       = "2023-01-03"
+    default_service_version       = ""
     last_access_time_enabled      = false
     versioning_enabled            = true
     container_delete_retention_policy = {

@@ -16,7 +16,29 @@ resource "azurerm_storage_account" "sa" {
   local_user_enabled                = var.local_user_enabled
   infrastructure_encryption_enabled = var.infrastructure_encryption_enabled
   tags                              = merge(data.azurerm_resource_group.rg.tags, var.tags)
+  dynamic "blob_properties" {
+    for_each = var.blob_properties == null ? [] : [var.blob_properties]
+    content {
+      change_feed_enabled           = blob_properties.value.change_feed_enabled
+      change_feed_retention_in_days = blob_properties.value.change_feed_retention_in_days
+      default_service_version       = blob_properties.value.default_service_version
+      last_access_time_enabled      = blob_properties.value.last_access_time_enabled
+      versioning_enabled            = blob_properties.value.versioning_enabled
 
+      container_delete_retention_policy {
+        days = blob_properties.value.container_delete_retention_policy.days
+      }
+
+      delete_retention_policy {
+        days                     = blob_properties.value.delete_retention_policy.days
+        permanent_delete_enabled = blob_properties.value.delete_retention_policy.permanent_delete_enabled
+      }
+
+      restore_policy {
+        days = blob_properties.value.restore_policy.days
+      }
+    }
+  }
   dynamic "network_rules" {
     for_each = var.network_rules == null ? [] : [var.network_rules]
     content {

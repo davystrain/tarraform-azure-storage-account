@@ -65,7 +65,7 @@ variable "min_tls_version" {
 variable "public_network_access_enabled" {
   description = "Enable public network access."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "shared_access_key_enabled" {
@@ -90,6 +90,44 @@ variable "tags" {
   description = "A map of tags to assign to the storage account."
   type        = map(string)
   default     = {}
+}
+
+variable "blob_properties" {
+  description = "Blob properties block."
+  type = object({
+    change_feed_enabled           = bool
+    change_feed_retention_in_days = number
+    default_service_version       = string
+    last_access_time_enabled      = bool
+    versioning_enabled            = bool
+    container_delete_retention_policy = object({
+      days = number
+    })
+    delete_retention_policy = object({
+      days                     = number
+      permanent_delete_enabled = bool
+    })
+    restore_policy = object({
+      days = number
+    })
+  })
+  default = {
+    change_feed_enabled           = true
+    change_feed_retention_in_days = 30
+    default_service_version       = "2020-06-12"
+    last_access_time_enabled      = false
+    versioning_enabled            = true
+    container_delete_retention_policy = {
+      days = 7
+    }
+    delete_retention_policy = {
+      days                     = 7
+      permanent_delete_enabled = false
+    }
+    restore_policy = {
+      days = 6
+    }
+  }
 }
 
 variable "network_rules" {

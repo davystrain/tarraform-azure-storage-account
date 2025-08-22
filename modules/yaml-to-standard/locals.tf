@@ -5,9 +5,9 @@ locals {
         storage_account_name              = k
         resource_group_name               = v.resource_group_name
         location                          = v.location
-        access_tier                       = v.access_tier
         account_replication_type          = v.account_replication_type
         account_tier                      = v.account_tier
+        access_tier                       = try(v.access_tier, null)
         account_kind                      = try(v.account_kind, null)
         allow_nested_items_to_be_public   = try(v.allow_nested_items_to_be_public, null)
         cross_tenant_replication_enabled  = try(v.cross_tenant_replication_enabled, null)

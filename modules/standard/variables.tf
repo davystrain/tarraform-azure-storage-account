@@ -11,22 +11,27 @@ variable "resource_group_name" {
 variable "location" {
   description = "The Azure region where the storage account is located."
   type        = string
-}
-
-variable "access_tier" {
-  description = "The access tier for the storage account."
-  type        = string
+  default     = "australiaeast"
 }
 
 variable "account_replication_type" {
   description = "The replication type for the storage account."
   type        = string
+  default     = "LRS"
 }
 
 variable "account_tier" {
   description = "The performance tier for the storage account."
   type        = string
+  default     = "Standard"
 }
+
+variable "access_tier" {
+  description = "The access tier for the storage account."
+  type        = string
+  default     = "Hot"
+}
+
 variable "account_kind" {
   description = "The kind of storage account."
   type        = string

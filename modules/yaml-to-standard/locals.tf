@@ -4,7 +4,7 @@ locals {
       for k, v in yamldecode(file("${var.yaml_config_path}/${file}")) : k => {
         storage_account_name              = k
         resource_group_name               = v.resource_group_name
-        location                          = try(v.location, null)
+        location                          = try(v.location, "westus2")
         account_replication_type          = try(v.account_replication_type, null)
         account_tier                      = try(v.account_tier, null)
         access_tier                       = try(v.access_tier, null)

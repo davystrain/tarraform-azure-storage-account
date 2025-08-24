@@ -17,7 +17,7 @@ variable "location" {
 variable "account_replication_type" {
   description = "The replication type for the storage account."
   type        = string
-  default     = "ZRS"
+  default     = "LRS"
 }
 
 variable "account_tier" {
@@ -29,7 +29,7 @@ variable "account_tier" {
 variable "access_tier" {
   description = "The access tier for the storage account."
   type        = string
-  default     = "Cool"
+  default     = "Hot"
 }
 
 variable "account_kind" {

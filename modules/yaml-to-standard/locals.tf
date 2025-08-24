@@ -5,7 +5,7 @@ locals {
         storage_account_name              = k
         resource_group_name               = v.resource_group_name
         location                          = try(v.location, null)
-        account_replication_type          = coalesce(v.account_replication_type, "ZRS")
+        account_replication_type          = try(v.account_replication_type, "ZRS")
         account_tier                      = try(v.account_tier, null)
         access_tier                       = try(v.access_tier, null)
         account_kind                      = try(v.account_kind, null)

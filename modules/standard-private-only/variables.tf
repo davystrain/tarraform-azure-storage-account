@@ -8,6 +8,12 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "location" {
+  description = "The Azure region where the storage account is located."
+  type        = string
+  default     = "australiaeast"
+}
+
 variable "access_tier" {
   description = "The access tier for the storage account."
   type        = string

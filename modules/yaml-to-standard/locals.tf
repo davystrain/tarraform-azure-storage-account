@@ -5,7 +5,7 @@ locals {
         storage_account_name              = k
         resource_group_name               = v.resource_group_name
         location                          = try(v.location, "australiaeast")
-        account_replication_type          = try(v.account_replication_type, "")
+        account_replication_type          = try(v.account_replication_type, "LRS")
         account_tier                      = try(v.account_tier, "Standard")
         access_tier                       = try(v.access_tier, "Hot")
         account_kind                      = try(v.account_kind, "StorageV2")

@@ -7,7 +7,7 @@ locals {
         location                          = try(v.location, "australiaeast")
         account_replication_type          = try(v.account_replication_type, "LRS")
         account_tier                      = try(v.account_tier, "Standard")
-        access_tier                       = try(v.access_tier, null)
+        access_tier                       = try(v.access_tier, "Hot")
         account_kind                      = try(v.account_kind, "StorageV2")
         allow_nested_items_to_be_public   = try(v.allow_nested_items_to_be_public, false)
         cross_tenant_replication_enabled  = try(v.cross_tenant_replication_enabled, false)

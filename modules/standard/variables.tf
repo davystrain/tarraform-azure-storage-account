@@ -11,7 +11,7 @@ variable "resource_group_name" {
 variable "location" {
   description = "The Azure region where the storage account is located."
   type        = string
-  default     = "eastus"
+  default     = "australiasoutheast"
 }
 
 variable "account_replication_type" {

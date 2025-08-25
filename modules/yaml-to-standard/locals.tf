@@ -18,12 +18,12 @@ locals {
         shared_access_key_enabled         = coalesce(try(v.shared_access_key_enabled, null), false)
         local_user_enabled                = coalesce(try(v.local_user_enabled, null), false)
         infrastructure_encryption_enabled = coalesce(try(v.infrastructure_encryption_enabled, null), true)
-        blob_properties                   = coalesce(try(v.blob_properties, null), {})
-        network_rules                     = coalesce(try(v.network_rules, null), {})
-        containers                        = coalesce(try(v.containers, null), [])
-        queues                            = coalesce(try(v.queues, null), [])
-        tables                            = coalesce(try(v.tables, null), [])
-        tags                              = coalesce(try(v.tags, null), {})
+        blob_properties                   = coalesce(try(v.blob_properties, {}), {})
+        network_rules                     = coalesce(try(v.network_rules, {}), {})
+        containers                        = coalesce(try(v.containers, []), [])
+        queues                            = coalesce(try(v.queues, []), [])
+        tables                            = coalesce(try(v.tables, []), [])
+        tags                              = coalesce(try(v.tags, {}), {})
 
         container_role_assignments = flatten([
           for container in try(v.containers, []) : [

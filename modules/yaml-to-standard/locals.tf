@@ -7,7 +7,7 @@ locals {
         location                          = v.location
         account_replication_type          = try(v.account_replication_type, null)
         account_tier                      = try(v.account_tier, null)
-        access_tier                       = try(v.access_tier, null)
+        access_tier                       = v.access_tier
         account_kind                      = try(v.account_kind, null)
         allow_nested_items_to_be_public   = try(v.allow_nested_items_to_be_public, null)
         cross_tenant_replication_enabled  = try(v.cross_tenant_replication_enabled, null)

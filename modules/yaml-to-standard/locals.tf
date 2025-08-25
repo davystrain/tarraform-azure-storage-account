@@ -7,7 +7,7 @@ locals {
         location                          = coalesce(try(v.location, null), "australiaeast")
         account_replication_type          = coalesce(try(v.account_replication_type, null), "LRS")
         account_tier                      = coalesce(try(v.account_tier, null), "Standard")
-        access_tier                       = coalesce(try(v.access_tier, null), "Hot")
+        access_tier                       = try(v.access_tier, null)
         account_kind                      = coalesce(try(v.account_kind, null), "StorageV2")
         allow_nested_items_to_be_public   = coalesce(try(v.allow_nested_items_to_be_public, null), false)
         cross_tenant_replication_enabled  = coalesce(try(v.cross_tenant_replication_enabled, null), false)

@@ -20,10 +20,10 @@ locals {
         infrastructure_encryption_enabled = try(v.infrastructure_encryption_enabled, null)
         blob_properties                   = try(v.blob_properties, null)
         network_rules                     = try(v.network_rules, null)
-        containers                        = try(v.containers, [])
-        queues                            = try(v.queues, [])
-        tables                            = try(v.tables, [])
-        tags                              = try(v.tags, {})
+        containers                        = try(v.containers, null)
+        queues                            = try(v.queues, null)
+        tables                            = try(v.tables, null)
+        tags                              = try(v.tags, null)
 
         container_role_assignments = flatten([
           for container in try(v.containers, []) : [

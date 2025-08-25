@@ -4,9 +4,9 @@ locals {
       for k, v in yamldecode(file("${var.yaml_config_path}/${file}")) : k => {
         storage_account_name              = k
         resource_group_name               = v.resource_group_name
-        location                          = try(v.location, null)
-        account_replication_type          = try(v.account_replication_type, null)
-        account_tier                      = try(v.account_tier, null)
+        location                          = v.location
+        account_replication_type          = v.account_replication_type
+        account_tier                      = v.account_tier
         access_tier                       = try(v.access_tier, null)
         account_kind                      = try(v.account_kind, null)
         allow_nested_items_to_be_public   = try(v.allow_nested_items_to_be_public, null)

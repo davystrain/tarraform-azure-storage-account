@@ -52,7 +52,7 @@ resource "azurerm_storage_account" "sa" {
 }
 
 resource "azurerm_storage_container" "sc" {
-  for_each = var.containers == null ? [] : [var.containers]
+  for_each           = var.containers == null ? [] : [var.containers]
   name               = each.value.name
   storage_account_id = azurerm_storage_account.sa.id
 }

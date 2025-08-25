@@ -52,7 +52,7 @@ resource "azurerm_storage_account" "sa" {
 }
 
 resource "azurerm_storage_container" "sc" {
-  for_each           = { for c in var.containers : c.name => c }
+  for_each = var.containers == null ? [] : [var.containers]
   name               = each.value.name
   storage_account_id = azurerm_storage_account.sa.id
 }
@@ -67,7 +67,7 @@ resource "azurerm_role_assignment" "container_roles" {
 }
 
 resource "azapi_resource" "sq" {
-  for_each  = { for q in var.queues : q.name => q }
+  for_each  = var.queues == null ? [] : [var.queues]
   type      = "Microsoft.Storage/storageAccounts/queueServices/queues@2022-09-01"
   name      = each.value.name
   parent_id = "${azurerm_storage_account.sa.id}/queueServices/default"
@@ -76,7 +76,7 @@ resource "azapi_resource" "sq" {
   }
 }
 resource "azapi_resource" "st" {
-  for_each  = { for t in var.tables : t.name => t }
+  for_each  = var.tables == null ? [] : [var.tables]
   type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2022-09-01"
   name      = each.value.name
   parent_id = "${azurerm_storage_account.sa.id}/tableServices/default"

@@ -29,7 +29,7 @@ variable "account_tier" {
 variable "access_tier" {
   description = "The access tier for the storage account."
   type        = string
-  default     = "Cool"
+  default     = "Hot"
 }
 
 variable "account_kind" {

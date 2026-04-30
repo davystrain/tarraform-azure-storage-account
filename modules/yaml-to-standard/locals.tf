@@ -24,6 +24,9 @@ locals {
         queues                            = try(v.queues, [])
         tables                            = try(v.tables, [])
         tags                              = try(v.tags, {})
+        resource_role_assignments         = try(v.resource_role_assignments, {})
+        static_website                    = try(v.static_website, false)
+        static_website_index_document     = try(v.static_website_index_document, null)
 
         container_role_assignments = flatten([
           for container in try(v.containers, []) : [

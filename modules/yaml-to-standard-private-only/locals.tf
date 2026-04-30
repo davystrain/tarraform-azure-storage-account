@@ -4,20 +4,20 @@ locals {
       for k, v in yamldecode(file("${var.yaml_config_path}/${file}")) : k => {
         storage_account_name                = k
         resource_group_name                 = v.resource_group_name
-        location                            = v.location
-        account_replication_type            = v.account_replication_type
-        account_tier                        = v.account_tier
-        access_tier                         = try(v.access_tier, null)
-        account_kind                        = try(v.account_kind, null)
-        allow_nested_items_to_be_public     = try(v.allow_nested_items_to_be_public, null)
-        cross_tenant_replication_enabled    = try(v.cross_tenant_replication_enabled, null)
-        default_to_oauth_authentication     = try(v.default_to_oauth_authentication, null)
-        https_traffic_only_enabled          = try(v.https_traffic_only_enabled, null)
-        min_tls_version                     = try(v.min_tls_version, null)
-        public_network_access_enabled       = try(v.public_network_access_enabled, null)
-        shared_access_key_enabled           = try(v.shared_access_key_enabled, null)
-        local_user_enabled                  = try(v.local_user_enabled, null)
-        infrastructure_encryption_enabled   = try(v.infrastructure_encryption_enabled, null)
+        location                            = try(v.location, "australiaeast")
+        account_replication_type            = try(v.account_replication_type, "LRS")
+        account_tier                        = try(v.account_tier, "Standard")
+        access_tier                         = try(v.access_tier, "Hot")
+        account_kind                        = try(v.account_kind, "StorageV2")
+        allow_nested_items_to_be_public     = try(v.allow_nested_items_to_be_public, false)
+        cross_tenant_replication_enabled    = try(v.cross_tenant_replication_enabled, false)
+        default_to_oauth_authentication     = try(v.default_to_oauth_authentication, true)
+        https_traffic_only_enabled          = try(v.https_traffic_only_enabled, true)
+        min_tls_version                     = try(v.min_tls_version, "TLS1_2")
+        public_network_access_enabled       = try(v.public_network_access_enabled, false)
+        shared_access_key_enabled           = try(v.shared_access_key_enabled, false)
+        local_user_enabled                  = try(v.local_user_enabled, false)
+        infrastructure_encryption_enabled   = try(v.infrastructure_encryption_enabled, true)
         blob_properties                     = try(v.blob_properties, null)
         network_rules                       = try(v.network_rules, null)
         containers                          = try(v.containers, [])
@@ -27,6 +27,9 @@ locals {
         private_endpoint_subnet_name        = try(v.private_endpoint_subnet_name, null)
         virtual_network_name                = try(v.virtual_network_name, null)
         virtual_network_resource_group_name = try(v.virtual_network_resource_group_name, null)
+        resource_role_assignments           = try(v.resource_role_assignments, {})
+        static_website                      = try(v.static_website, false)
+        static_website_index_document       = try(v.static_website_index_document, null)
 
         container_role_assignments = flatten([
           for container in try(v.containers, []) : [

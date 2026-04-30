@@ -14,22 +14,22 @@ variable "location" {
   default     = "australiaeast"
 }
 
-variable "account_replication_type" {
-  description = "The replication type for the storage account."
-  type        = string
-  default     = "LRS"
-}
-
 variable "account_tier" {
   description = "The performance tier for the storage account."
   type        = string
   default     = "Standard"
 }
 
+variable "account_replication_type" {
+  description = "The replication type for the storage account."
+  type        = string
+  default     = "LRS"
+}
+
 variable "access_tier" {
   description = "The access tier for the storage account."
   type        = string
-  default     = "Cool"
+  default     = "Hot"
 }
 
 variable "account_kind" {
@@ -97,24 +97,45 @@ variable "tags" {
   default     = {}
 }
 
+variable "static_website" {
+  description = "If static_website is set to true, the service will automatically create a azurerm_storage_container named $web."
+  type        = bool
+  default     = false
+}
+
+variable "static_website_index_document" {
+  description = "The name of the index document for the static website."
+  type        = string
+  default     = null
+}
+
 variable "blob_properties" {
-  description = "Blob properties block."
+  description = "Blob properties block. Set to null to disable."
   type = object({
-    change_feed_enabled           = bool
-    change_feed_retention_in_days = number
-    default_service_version       = string
-    last_access_time_enabled      = bool
-    versioning_enabled            = bool
-    container_delete_retention_policy = object({
-      days = number
-    })
-    delete_retention_policy = object({
-      days                     = number
-      permanent_delete_enabled = bool
-    })
-    restore_policy = object({
-      days = number
-    })
+    change_feed_enabled           = optional(bool, true)
+    change_feed_retention_in_days = optional(number, 30)
+    default_service_version       = optional(string, "2023-01-03")
+    last_access_time_enabled      = optional(bool, false)
+    versioning_enabled            = optional(bool, true)
+    container_delete_retention_policy = optional(object({
+      days = optional(number, 7)
+    }), { days = 7 })
+    delete_retention_policy = optional(object({
+      days                     = optional(number, 7)
+      permanent_delete_enabled = optional(bool, false)
+      }),
+      { days = 7, permanent_delete_enabled = false }
+    )
+    restore_policy = optional(object({
+      days = optional(number)
+    }), { days = 6 })
+    cors_rules = optional(list(object({
+      allowed_headers    = list(string)
+      allowed_methods    = list(string)
+      allowed_origins    = list(string)
+      exposed_headers    = list(string)
+      max_age_in_seconds = number
+    })), [])
   })
   default = {
     change_feed_enabled           = true
@@ -132,6 +153,7 @@ variable "blob_properties" {
     restore_policy = {
       days = 6
     }
+    cors_rules = []
   }
 }
 
@@ -142,21 +164,75 @@ variable "network_rules" {
     default_action             = string
     ip_rules                   = list(string)
     virtual_network_subnet_ids = list(string)
+    private_link_access = optional(list(object({
+      endpoint_resource_id = string
+      endpoint_tenant_id   = optional(string)
+    })))
   })
   default = {
     bypass                     = ["AzureServices"]
     default_action             = "Deny"
     ip_rules                   = []
     virtual_network_subnet_ids = []
+    private_link_access        = []
   }
 }
 
 variable "containers" {
-  description = "List of storage containers"
+  description = "List of storage containers, with optional per-container lifecycle rules that are merged into a single azurerm_storage_management_policy on the storage account."
   type = list(object({
     name = string
+    lifecycle_rules = optional(list(object({
+      name    = string
+      enabled = optional(bool, true)
+      filters = optional(object({
+        blob_types   = optional(list(string), ["blockBlob"])
+        prefix_match = optional(list(string), [])
+      }), { blob_types = ["blockBlob"], prefix_match = [] })
+      actions = object({
+        base_blob = optional(object({
+          delete_after_days_since_modification_greater_than              = optional(number)
+          delete_after_days_since_last_access_time_greater_than          = optional(number)
+          delete_after_days_since_creation_greater_than                  = optional(number)
+          tier_to_cool_after_days_since_modification_greater_than        = optional(number)
+          tier_to_cool_after_days_since_last_access_time_greater_than    = optional(number)
+          tier_to_cool_after_days_since_creation_greater_than            = optional(number)
+          tier_to_cold_after_days_since_modification_greater_than        = optional(number)
+          tier_to_cold_after_days_since_last_access_time_greater_than    = optional(number)
+          tier_to_cold_after_days_since_creation_greater_than            = optional(number)
+          tier_to_archive_after_days_since_modification_greater_than     = optional(number)
+          tier_to_archive_after_days_since_last_access_time_greater_than = optional(number)
+          tier_to_archive_after_days_since_creation_greater_than         = optional(number)
+          tier_to_archive_after_days_since_last_tier_change_greater_than = optional(number)
+        }))
+        snapshot = optional(object({
+          delete_after_days_since_creation_greater_than                  = optional(number)
+          change_tier_to_archive_after_days_since_creation               = optional(number)
+          tier_to_archive_after_days_since_last_tier_change_greater_than = optional(number)
+          change_tier_to_cool_after_days_since_creation                  = optional(number)
+          tier_to_cold_after_days_since_creation_greater_than            = optional(number)
+        }))
+        version = optional(object({
+          delete_after_days_since_creation                               = optional(number)
+          change_tier_to_archive_after_days_since_creation               = optional(number)
+          tier_to_archive_after_days_since_last_tier_change_greater_than = optional(number)
+          change_tier_to_cool_after_days_since_creation                  = optional(number)
+          tier_to_cold_after_days_since_creation_greater_than            = optional(number)
+        }))
+      })
+    })), [])
   }))
   default = []
+
+  validation {
+    condition = alltrue([
+      for container in var.containers : alltrue([
+        for rule in try(container.lifecycle_rules, []) :
+        try(rule.actions.base_blob != null || rule.actions.snapshot != null || rule.actions.version != null, false)
+      ])
+    ])
+    error_message = "Each lifecycle rule must define at least one of: base_blob, snapshot, or version in the actions block."
+  }
 }
 
 variable "container_role_assignments" {
@@ -186,3 +262,12 @@ variable "tables" {
   default = []
 }
 
+variable "resource_role_assignments" {
+  description = "RBAC role assignments for the Storage Account resource itself"
+  type = object({
+    Group            = optional(map(list(string)))
+    ServicePrincipal = optional(map(list(string)))
+    User             = optional(map(list(string)))
+  })
+  default = {}
+}
